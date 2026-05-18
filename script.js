@@ -173,6 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p><strong>Course:</strong> ${certData.course}</p>
                             <p><strong>Completion Date:</strong> ${certData.completion_date}</p>
                             <p><strong>Status:</strong> ${certData.status || 'Valid / Authentic'}</p>
+                            <div style="margin-top: 20px;">
+                                <a href="certificate.html?id=${certData.cert_no}" target="_blank" class="btn btn-primary btn-sm">View & Download Certificate</a>
+                            </div>
                         </div>
                     `;
                 } else {
