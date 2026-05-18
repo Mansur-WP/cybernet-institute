@@ -287,10 +287,10 @@
     </div>
 
     <script>
-        // Supabase Initialization
+        // Supabase Credentials
         const SUPABASE_URL = 'https://kpbcrndtbtpsmqkcsrqf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabase;
 
         // Responsive A4 scaling logic for screens
         function resizeCertificate() {
@@ -323,6 +323,14 @@
             }
 
             try {
+                // Initialize Supabase inside the try-catch to catch any library loading errors
+                const supabaseLib = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+                if (!supabaseLib) {
+                    throw new Error("Supabase SDK failed to load. Please check your internet connection.");
+                }
+
+                supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
                 const { data, error } = await supabase
                     .from('certificates')
                     .select('*')
@@ -349,15 +357,20 @@
                 }
             } catch (err) {
                 console.error(err);
-                document.getElementById('loading-overlay').innerHTML = "<span style='color:red;'>System Error loading certificate.</span>";
+                document.getElementById('loading-overlay').innerHTML = `<span style='color:red; font-size:1.1rem; padding:20px; text-align:center;'>Error: ${err.message || err}</span>`;
             }
         }
 
-        // Initialize & Bind Resize
-        document.addEventListener('DOMContentLoaded', () => {
+        // Initialize & Bind Resize (using readyState to prevent DOMContentLoaded race conditions)
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
             loadCertificate();
             window.addEventListener('resize', resizeCertificate);
-        });
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadCertificate();
+                window.addEventListener('resize', resizeCertificate);
+            });
+        }
     </script>
 </body>
 </html>
