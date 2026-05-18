@@ -28,6 +28,18 @@
         }
 
         /* A4 Landscape Size: 297mm x 210mm */
+        /* Responsive scaling container */
+        .certificate-container-outer {
+            width: 100%;
+            max-width: 1122px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+            margin: 40px 0;
+        }
+
+        /* A4 Landscape Size: 297mm x 210mm (approx 1122px x 793px) */
         .certificate-wrapper {
             width: 297mm;
             height: 210mm;
@@ -37,6 +49,8 @@
             padding: 15mm;
             box-sizing: border-box;
             background-image: radial-gradient(circle at center, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
+            transform-origin: center center;
+            flex-shrink: 0;
         }
 
         .certificate-border {
@@ -204,10 +218,15 @@
                 padding: 0;
                 margin: 0;
             }
+            .certificate-container-outer {
+                margin: 0;
+                height: auto !important;
+            }
             .certificate-wrapper {
                 box-shadow: none;
                 width: 297mm;
                 height: 210mm;
+                transform: none !important;
             }
             .print-controls {
                 display: none !important;
@@ -224,44 +243,46 @@
     </div>
 
     <!-- Certificate Render -->
-    <div class="certificate-wrapper" id="certificate-container">
-        <div class="loading-overlay" id="loading-overlay">Verifying Certificate...</div>
-        
-        <div class="certificate-border">
-            <img src="static/logo.png" alt="Cybernet Logo" class="cert-logo">
+    <div class="certificate-container-outer" id="certificate-container-outer">
+        <div class="certificate-wrapper" id="certificate-container">
+            <div class="loading-overlay" id="loading-overlay">Verifying Certificate...</div>
             
-            <h1 class="cert-title">Certificate of Completion</h1>
-            <div class="cert-subtitle">This officially certifies that</div>
-            
-            <div class="student-name" id="cert-name">Student Name</div>
-            
-            <div class="cert-text">has successfully completed the comprehensive training requirements for</div>
-            
-            <div class="course-name" id="cert-course">Course Name</div>
-            
-            <div class="cert-text" style="margin-top: 10px;">
-                Achieving a grade of: <strong id="cert-grade" style="color: var(--cert-gold);">Distinction</strong>
-            </div>
+            <div class="certificate-border">
+                <img src="/static/logo.png" alt="Cybernet Logo" class="cert-logo">
+                
+                <h1 class="cert-title">Certificate of Completion</h1>
+                <div class="cert-subtitle">This officially certifies that</div>
+                
+                <div class="student-name" id="cert-name">Student Name</div>
+                
+                <div class="cert-text">has successfully completed the comprehensive training requirements for</div>
+                
+                <div class="course-name" id="cert-course">Course Name</div>
+                
+                <div class="cert-text" style="margin-top: 10px;">
+                    Achieving a grade of: <strong id="cert-grade" style="color: var(--cert-gold);">Distinction</strong>
+                </div>
 
-            <div class="cert-footer">
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">Course Instructor</div>
-                </div>
-                
-                <div class="seal">
-                    CYBERNET<br>OFFICIAL<br>SEAL
-                </div>
-                
-                <div class="signature-block">
-                    <div class="signature-line" style="display: flex; align-items: flex-end; justify-content: center; font-family: monospace; font-size: 1.1rem; padding-bottom: 5px;" id="cert-date">
-                        2026-05-18
+                <div class="cert-footer">
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-title">Course Instructor</div>
                     </div>
-                    <div class="signature-title">Date Issued</div>
+                    
+                    <div class="seal">
+                        CYBERNET<br>OFFICIAL<br>SEAL
+                    </div>
+                    
+                    <div class="signature-block">
+                        <div class="signature-line" style="display: flex; align-items: flex-end; justify-content: center; font-family: monospace; font-size: 1.1rem; padding-bottom: 5px;" id="cert-date">
+                            2026-05-18
+                        </div>
+                        <div class="signature-title">Date Issued</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="cert-id-badge" id="cert-id-text">ID: CCI-CERT-00000</div>
+                <div class="cert-id-badge" id="cert-id-text">ID: CCI-CERT-00000</div>
+            </div>
         </div>
     </div>
 
@@ -271,12 +292,33 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Responsive A4 scaling logic for screens
+        function resizeCertificate() {
+            const wrapper = document.getElementById('certificate-container');
+            const outer = document.getElementById('certificate-container-outer');
+            if (!wrapper || !outer) return;
+            
+            const baseWidth = 1122; // approx 297mm in pixels
+            const containerWidth = outer.clientWidth;
+            
+            if (containerWidth < baseWidth) {
+                const scale = containerWidth / baseWidth;
+                wrapper.style.transform = `scale(${scale})`;
+                // Calculate correct outer height so space is not wasted
+                outer.style.height = `${793 * scale}px`; // 210mm in pixels * scale
+            } else {
+                wrapper.style.transform = 'none';
+                outer.style.height = 'auto';
+            }
+        }
+
         async function loadCertificate() {
             const urlParams = new URLSearchParams(window.location.search);
             const certId = urlParams.get('id');
 
             if (!certId) {
-                document.getElementById('loading-overlay').innerHTML = "<span style='color:red;'>Error: No Certificate ID provided in URL.</span>";
+                // If visited directly without an ID, redirect to verify page beautifully
+                window.location.href = 'verify.html';
                 return;
             }
 
@@ -299,6 +341,9 @@
                     
                     // Hide loading overlay
                     document.getElementById('loading-overlay').style.display = 'none';
+                    
+                    // Trigger responsive scaling
+                    resizeCertificate();
                 } else {
                     document.getElementById('loading-overlay').innerHTML = "<span style='color:red;'>Certificate Not Found or Invalid.</span>";
                 }
@@ -308,8 +353,11 @@
             }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', loadCertificate);
+        // Initialize & Bind Resize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCertificate();
+            window.addEventListener('resize', resizeCertificate);
+        });
     </script>
 </body>
 </html>
