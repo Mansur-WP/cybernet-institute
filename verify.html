@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate | Cybernet Computer Institute</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <div class="logo">
+                <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="verify.html" class="active">Verify Certificate</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Certificate Verification</h1>
+            <p>Validate the authenticity of certifications issued by Cybernet Computer Institute.</p>
+        </div>
+    </header>
+
+    <!-- Content Section -->
+    <section class="content-section features">
+        <div class="container">
+            <div class="system-container">
+                <h2 style="margin-bottom: 24px; text-align: center;">Verify Authenticity</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">Enter the unique Certificate ID printed on the document to retrieve verification details.</p>
+                
+                <form id="verify-form">
+                    <div class="form-group">
+                        <label for="cert-id">Certificate ID</label>
+                        <input type="text" id="cert-id" placeholder="e.g. CCI-CERT-12345" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Verify Now</button>
+                </form>
+
+                <div id="verify-result" class="result-box">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <div class="logo">
+                    <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
+                </div>
+                <p>Excellence in IT education since 2020. Providing quality training for the next generation of digital leaders.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="verify.html">Verify Certificate</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p>Email: cybernetcafeng@gmail.com</p>
+                <p>Phone: +234 806 571-2820</p>
+                <p>Phone: +234 904 283-4479</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 Cybernet Computer Institute. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
+</body>
+</html>

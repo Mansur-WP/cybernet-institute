@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Cybernet Computer Institute</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="admin-body">
+
+    <!-- Navbar -->
+    <nav class="navbar admin-nav">
+        <div class="container navbar-content">
+            <div class="logo">
+                <img src="static/logo.png" alt="Cybernet Logo" class="logo-img">
+                <span style="font-weight: 700; margin-left: 10px; color: var(--primary-navy);">Admin Portal</span>
+            </div>
+            <div class="nav-cta" id="admin-nav-actions" style="display: none;">
+                <span id="admin-email-display" style="margin-right: 15px; font-weight: 500; color: var(--text-muted);"></span>
+                <button id="admin-logout-btn" class="btn btn-outline btn-sm">Log Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section id="admin-login-section" class="content-section" style="min-height: calc(100vh - 80px); display: flex; align-items: center;">
+        <div class="container">
+            <div class="system-container" style="max-width: 500px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 10px;">Admin Login</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Secure access for authorized staff only.</p>
+                
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-email">Email Address</label>
+                        <input type="email" id="admin-email" placeholder="admin@cybernet.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Secure Login</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section (Hidden by default) -->
+    <section id="admin-dashboard-section" class="content-section" style="display: none; padding-top: 120px; min-height: calc(100vh - 80px);">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Cybernet Management Dashboard</h2>
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-target="students-tab">Registered Students</button>
+                    <button class="tab-btn" data-target="certificates-tab">Issued Certificates</button>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="students-tab" class="dashboard-panel active">
+                <div class="panel-header">
+                    <h3>Recent Registrations</h3>
+                    <button id="refresh-students-btn" class="btn btn-outline btn-sm">Refresh Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Reg ID</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Certificates Tab -->
+            <div id="certificates-tab" class="dashboard-panel" style="display: none;">
+                <div class="panel-header">
+                    <h3>Issued Certificates</h3>
+                    <button id="refresh-certificates-btn" class="btn btn-outline btn-sm">Refresh Data</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Cert ID</th>
+                                <th>Student Name</th>
+                                <th>Course</th>
+                                <th>Status</th>
+                                <th>Date Issued</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certificates-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Include Script at the bottom -->
+    <script src="script.js"></script>
+</body>
+</html>
