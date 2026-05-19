@@ -144,63 +144,134 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = verifyForm.querySelector('button[type="submit"]');
             
             if (!certIdInput) {
-                Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please enter a Certificate ID.' });
+                Swal.fire({ icon: 'warning', title: 'Missing Information', text: 'Please enter a Certificate or Registration ID.' });
                 return;
             }
 
             // Show loading state
-            resultBox.innerHTML = '<p style="text-align: center;">Verifying...</p>';
+            resultBox.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--logo-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                    <p style="color: var(--text-muted);">Querying Cybernet verification records...</p>
+                </div>
+            `;
             resultBox.classList.add('active');
             submitBtn.disabled = true;
 
             try {
-                // Search Supabase database for the certificate
-                const { data: certData, error } = await supabaseClient
-                    .from('certificates')
-                    .select('student_name, cert_no, course, completion_date, status')
-                    .eq('cert_no', certIdInput)
+                // 1. First, search if the student exists in the 'students' table
+                const { data: studentData, error: studentError } = await supabaseClient
+                    .from('students')
+                    .select('fullname, reg_no, course, created_at')
+                    .eq('reg_no', certIdInput)
                     .maybeSingle();
 
-                if (error) throw error;
+                if (studentError) throw studentError;
 
-                // Display Details if found
+                // 2. Next, check if the certificate has been officially issued in the 'certificates' table
+                const lookupId = studentData ? studentData.reg_no : certIdInput;
+                const { data: certData, error: certError } = await supabaseClient
+                    .from('certificates')
+                    .select('*')
+                    .eq('cert_no', lookupId)
+                    .maybeSingle();
+
+                if (certError) throw certError;
+
+                // Case A: Student is registered, but certificate is NOT issued yet
+                if (studentData && !certData) {
+                    resultBox.innerHTML = `
+                        <div style="border-left: 4px solid #F59E0B; padding: 25px; background: rgba(245, 158, 11, 0.05); border-radius: 4px; text-align: left;">
+                            <h3 style="color: #D97706; margin-bottom: 10px; font-size: 1.25rem;">⚠ Certificate Not Issued</h3>
+                            <p style="margin-bottom: 8px; color: var(--text-main);">
+                                Student <strong>${studentData.fullname}</strong> is successfully registered under Registration ID <strong>${studentData.reg_no}</strong> for <strong>${studentData.course}</strong>.
+                            </p>
+                            <p style="color: #EF4444; font-weight: 600; font-size: 1.05rem; margin-top: 15px; border-top: 1px solid rgba(245, 158, 11, 0.2); padding-top: 12px;">
+                                "Certificate has not been issued yet."
+                            </p>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">
+                                Please complete course requirements or contact the administrative desk to request certificate release.
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Case B: Certificate is successfully verified
                 if (certData) {
                     resultBox.innerHTML = `
-                        <div style="border-left: 4px solid #10B981; padding-left: 20px;">
-                            <h3 style="color: #10B981; margin-bottom: 10px;">✓ Certificate Verified</h3>
-                            <p><strong>Student Name:</strong> ${certData.student_name}</p>
-                            <p><strong>Certificate ID:</strong> ${certData.cert_no}</p>
-                            <p><strong>Course:</strong> ${certData.course}</p>
-                            <p><strong>Completion Date:</strong> ${certData.completion_date}</p>
-                            <p><strong>Status:</strong> ${certData.status || 'Valid / Authentic'}</p>
-                            <div style="margin-top: 20px;">
-                                <a href="certificate.html?id=${certData.cert_no}" target="_blank" class="btn btn-primary btn-sm">View & Download Certificate</a>
+                        <div class="verification-card">
+                            <div class="verification-badge">✓ Verified Student Certificate</div>
+                            
+                            <div class="verification-grid">
+                                <div class="grid-item">
+                                    <span class="grid-label">Student Name</span>
+                                    <span class="grid-val">${certData.student_name}</span>
+                                </div>
+                                <div class="grid-item">
+                                    <span class="grid-label">Course Completed</span>
+                                    <span class="grid-val">${certData.course}</span>
+                                </div>
+                                <div class="grid-item">
+                                    <span class="grid-label">Certificate / Reg ID</span>
+                                    <span class="grid-val" style="color: var(--logo-blue);">${certData.cert_no}</span>
+                                </div>
+                                <div class="grid-item">
+                                    <span class="grid-label">Completion Date</span>
+                                    <span class="grid-val">${certData.completion_date}</span>
+                                </div>
+                                <div class="grid-item">
+                                    <span class="grid-label">Grade / Status</span>
+                                    <span class="grid-val grade-${certData.status.toLowerCase().replace(/\s+/g, '-')}">${certData.status || 'Valid'}</span>
+                                </div>
+                            </div>
+
+                            <div class="verification-actions">
+                                <a href="certificate.html?id=${certData.cert_no}" target="_blank" class="btn btn-primary">
+                                    👁 View Preview
+                                </a>
+                                <a href="certificate.html?id=${certData.cert_no}&download=true" target="_blank" class="btn btn-outline" style="border: 1px solid var(--border-color);">
+                                    📥 Download PDF
+                                </a>
                             </div>
                         </div>
                     `;
-                } else {
-                    // Display Not Found if invalid
-                    resultBox.innerHTML = `
-                        <div style="border-left: 4px solid #EF4444; padding-left: 20px;">
-                            <h3 style="color: #EF4444; margin-bottom: 10px;">✗ Verification Failed</h3>
-                            <p>The Certificate ID "<strong>${certIdInput}</strong>" could not be found in our database. It may be invalid or forged.</p>
-                        </div>
-                    `;
+                    return;
                 }
+
+                // Case C: ID not found anywhere in our systems
+                resultBox.innerHTML = `
+                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 4px; text-align: left;">
+                        <h3 style="color: #DC2626; margin-bottom: 10px; font-size: 1.25rem;">✗ Verification Failed</h3>
+                        <p style="color: var(--text-main);">The Certificate ID "<strong>${certIdInput}</strong>" could not be verified.</p>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
+                            Ensure the ID is typed correctly (including prefixes like CCI-2026-). If you believe this is an error, please reach out to academic support.
+                        </p>
+                    </div>
+                `;
 
             } catch (error) {
                 console.error('Verification Error:', error);
                 resultBox.innerHTML = `
-                    <div style="border-left: 4px solid #EF4444; padding-left: 20px;">
-                        <h3 style="color: #EF4444; margin-bottom: 10px;">✗ System Error</h3>
-                        <p>There was an error connecting to the verification server. Please try again later.</p>
-                        <p style="font-size: 0.85em; color: #991b1b; margin-top: 10px;">Error Details: ${error.message || 'Unknown error'}</p>
+                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 4px; text-align: left;">
+                        <h3 style="color: #DC2626; margin-bottom: 10px;">✗ System Error</h3>
+                        <p style="color: var(--text-main);">There was an error communicating with the verification database.</p>
+                        <p style="font-size: 0.85em; color: #991b1b; margin-top: 10px;">Details: ${error.message || 'Unknown network error'}</p>
                     </div>
                 `;
             } finally {
                 submitBtn.disabled = false;
             }
         });
+
+        // Dynamic URL Parameter checking for QR-code scanner triggers
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCertId = urlParams.get('id');
+        if (urlCertId) {
+            document.getElementById('cert-id').value = urlCertId;
+            // Dispatch a submit event cleanly to start verification
+            verifyForm.dispatchEvent(new Event('submit'));
+        }
     }
 
     // ---------------------------------------------------------

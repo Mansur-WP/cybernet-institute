@@ -4,217 +4,384 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Official Certificate | Cybernet Computer Institute</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    
+    <!-- Supabase and html2pdf.js CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
-        /* Certificate Specific Styles */
+        /* Modern Premium Style Variables */
         :root {
-            --cert-gold: #D4AF37;
-            --cert-dark: #0F172A;
-            --cert-text: #333333;
+            --cert-gold: #C5A059;
+            --cert-gold-light: #F4EAD4;
+            --cert-navy: #0B132B;
+            --cert-dark: #1C2541;
+            --cert-text: #4A5568;
+            --font-serif: 'Cinzel', serif;
+            --font-cursive: 'Great Vibes', cursive;
+            --font-sans: 'Inter', sans-serif;
+            --font-italic: 'Playfair Display', serif;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
+            font-family: var(--font-sans);
+            background-color: #f3f4f6;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
-        }
-
-        /* A4 Landscape Size: 297mm x 210mm */
-        /* Responsive scaling container */
-        .certificate-container-outer {
-            width: 100%;
-            max-width: 1122px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: visible;
-            margin: 40px 0;
-        }
-
-        /* A4 Landscape Size: 297mm x 210mm (approx 1122px x 793px) */
-        .certificate-wrapper {
-            width: 297mm;
-            height: 210mm;
-            background: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            position: relative;
-            padding: 15mm;
+            padding: 40px 20px;
             box-sizing: border-box;
-            background-image: radial-gradient(circle at center, rgba(212, 175, 55, 0.03) 0%, transparent 70%);
-            transform-origin: center center;
-            flex-shrink: 0;
         }
 
-        .certificate-border {
-            border: 3px solid var(--cert-gold);
-            outline: 1px solid var(--cert-gold);
-            outline-offset: -10px;
-            width: 100%;
-            height: 100%;
-            padding: 30px;
-            box-sizing: border-box;
-            position: relative;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .cert-logo {
-            width: 180px;
-            margin: 0 auto 20px;
-        }
-
-        .cert-title {
-            font-family: 'Cinzel', serif;
-            font-size: 3rem;
-            color: var(--cert-dark);
-            margin: 0 0 10px;
-            letter-spacing: 4px;
-            font-weight: 700;
-        }
-
-        .cert-subtitle {
-            font-size: 1.2rem;
-            color: var(--cert-gold);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            font-weight: 600;
-        }
-
-        .cert-text {
-            font-size: 1.2rem;
-            color: var(--cert-text);
-            margin-bottom: 20px;
-        }
-
-        .student-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: 4.5rem;
-            color: var(--cert-dark);
-            margin: 10px 0 30px;
-            line-height: 1;
-        }
-
-        .course-name {
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--cert-dark);
-            margin: 20px 0;
-            text-transform: uppercase;
-        }
-
-        .cert-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 60px;
-            padding: 0 40px;
-        }
-
-        .signature-block {
-            text-align: center;
-            width: 200px;
-        }
-
-        .signature-line {
-            border-bottom: 1px solid var(--cert-dark);
-            margin-bottom: 10px;
-            height: 40px; /* Space for signature image if needed */
-        }
-
-        .signature-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--cert-text);
-            text-transform: uppercase;
-        }
-
-        .seal {
-            width: 100px;
-            height: 100px;
-            background: var(--cert-gold);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-family: 'Cinzel', serif;
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
-            border: 2px dashed white;
-        }
-
-        .cert-id-badge {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 0.8rem;
-            color: #888;
-            font-family: monospace;
-        }
-
-        /* Print Controls */
+        /* Float Controls Panel */
         .print-controls {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             z-index: 1000;
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-family: var(--font-sans);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .btn-primary { background: #00AEEF; color: white; }
-        .btn-primary:hover { background: #0096ce; }
-        .btn-outline { background: transparent; border: 1px solid #cbd5e1; }
-        .btn-outline:hover { background: #f8fafc; }
+        .btn-primary { 
+            background: var(--cert-navy); 
+            color: #ffffff; 
+        }
+        .btn-primary:hover { 
+            background: #1C2541; 
+            transform: translateY(-1px);
+        }
+        .btn-accent {
+            background: var(--cert-gold);
+            color: #ffffff;
+        }
+        .btn-accent:hover {
+            background: #B08A45;
+            transform: translateY(-1px);
+        }
+        .btn-outline { 
+            background: transparent; 
+            border: 1px solid #cbd5e1; 
+            color: var(--cert-dark);
+        }
+        .btn-outline:hover { 
+            background: #f8fafc; 
+        }
 
-        .loading-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: white;
+        /* Dynamic Scale Layout for Screen Display */
+        .certificate-container-outer {
+            width: 100%;
+            max-width: 1122px; /* Standard landscape container */
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            z-index: 50;
+            overflow: visible;
+            margin: 40px auto;
         }
 
-        /* Print Styles - crucial for A4 PDF */
+        /* Certificate A4 Landscape Dimensions: 297mm x 210mm */
+        .certificate-wrapper {
+            width: 297mm;
+            height: 210mm;
+            background: #ffffff;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            position: relative;
+            padding: 16mm;
+            box-sizing: border-box;
+            background-image: radial-gradient(circle at center, rgba(197, 160, 89, 0.02) 0%, transparent 80%);
+            transform-origin: center center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* Watermark Background */
+        .certificate-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            transform: translate(-50%, -50%);
+            background: url('/static/logo.png') no-repeat center;
+            background-size: contain;
+            opacity: 0.04;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Double Border Gold & Navy */
+        .certificate-border {
+            border: 4px solid var(--cert-navy);
+            outline: 2px solid var(--cert-gold);
+            outline-offset: -12px;
+            width: 100%;
+            height: 100%;
+            padding: 24px 40px;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* Corner Gold Ornament Styles */
+        .corner-ornament {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border: 2px solid var(--cert-gold);
+            z-index: 3;
+        }
+        .top-left     { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+        .top-right    { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+        .bottom-left  { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+        .bottom-right { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+        .cert-header {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .cert-logo {
+            width: 160px;
+            margin: 0 auto 12px;
+        }
+
+        .cert-title {
+            font-family: var(--font-serif);
+            font-size: 2.6rem;
+            color: var(--cert-navy);
+            margin: 0 0 4px;
+            letter-spacing: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .cert-subtitle {
+            font-family: var(--font-italic);
+            font-size: 1.15rem;
+            color: var(--cert-gold);
+            margin-bottom: 25px;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .cert-recipient-text {
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            color: var(--cert-text);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        .student-name {
+            font-family: var(--font-cursive);
+            font-size: 4.2rem;
+            color: var(--cert-navy);
+            margin: 5px 0 20px;
+            line-height: 1;
+            font-weight: 500;
+        }
+
+        .cert-course-text {
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            color: var(--cert-text);
+            margin-bottom: 12px;
+        }
+
+        .course-name {
+            font-family: var(--font-serif);
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--cert-navy);
+            margin: 10px 0 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            padding-bottom: 8px;
+            display: inline-block;
+            min-width: 60%;
+        }
+
+        .cert-grade-text {
+            font-size: 1.05rem;
+            color: var(--cert-text);
+            margin-bottom: 30px;
+        }
+
+        .cert-grade-text strong {
+            color: var(--cert-gold);
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+        }
+
+        /* Footer Alignment */
+        .cert-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 180px;
+        }
+
+        .signature-line {
+            border-bottom: 1.5px solid var(--cert-navy);
+            margin-bottom: 8px;
+            height: 45px;
+            position: relative;
+        }
+
+        /* High-quality Digital Signatures (Styled placeholder script fonts) */
+        .sig-image-director::after {
+            content: "Mansur W.P.";
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-cursive);
+            font-size: 2.2rem;
+            color: #1a365d;
+            opacity: 0.85;
+            white-space: nowrap;
+        }
+
+        .sig-image-instructor::after {
+            content: "Cybernet Academic";
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-cursive);
+            font-size: 2.2rem;
+            color: #2b6cb0;
+            opacity: 0.85;
+            white-space: nowrap;
+        }
+
+        .signature-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--cert-navy);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: var(--font-sans);
+        }
+
+        /* Dynamic QR Code box & Verification details */
+        .qr-badge-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .qr-code-box {
+            width: 75px;
+            height: 75px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 4px;
+            border-radius: 4px;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-code-box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .cert-info-meta {
+            text-align: left;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            color: var(--cert-text);
+            line-height: 1.4;
+        }
+
+        .cert-info-meta strong {
+            color: var(--cert-navy);
+        }
+
+        /* Loading & Error Screens */
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--cert-navy);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* PDF Render Modifications */
+        .exporting {
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Print Settings */
         @media print {
             @page {
                 size: A4 landscape;
                 margin: 0;
             }
             body {
-                background: white;
+                background: #ffffff;
                 padding: 0;
                 margin: 0;
             }
@@ -236,52 +403,75 @@
 </head>
 <body>
 
-    <!-- Controls -->
+    <!-- Dynamic Actions Toolbar -->
     <div class="print-controls">
-        <button class="btn btn-outline" onclick="window.close()">Close</button>
-        <button class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn btn-outline" onclick="window.close()">Close Preview</button>
+        <button class="btn btn-outline" onclick="window.print()">Print Original</button>
+        <button class="btn btn-primary" id="download-pdf-btn">Download PDF</button>
     </div>
 
-    <!-- Certificate Render -->
+    <!-- Certificate Visual Node -->
     <div class="certificate-container-outer" id="certificate-container-outer">
         <div class="certificate-wrapper" id="certificate-container">
-            <div class="loading-overlay" id="loading-overlay">Verifying Certificate...</div>
+            <!-- Loading Box -->
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner"></div>
+                <div style="font-size: 1.25rem; font-weight: 600; color: var(--cert-navy);" id="loading-text">Verifying Academic Credentials...</div>
+            </div>
             
             <div class="certificate-border">
-                <img src="/static/logo.png" alt="Cybernet Logo" class="cert-logo">
+                <!-- Corner Borders -->
+                <div class="corner-ornament top-left"></div>
+                <div class="corner-ornament top-right"></div>
+                <div class="corner-ornament bottom-left"></div>
+                <div class="corner-ornament bottom-right"></div>
+
+                <!-- Header Logo & Heading -->
+                <div class="cert-header">
+                    <img src="/static/logo.png" alt="Cybernet Logo" class="cert-logo">
+                    <h1 class="cert-title">Certificate of Completion</h1>
+                    <div class="cert-subtitle">Cybernet Computer Institute certifies that</div>
+                </div>
                 
-                <h1 class="cert-title">Certificate of Completion</h1>
-                <div class="cert-subtitle">This officially certifies that</div>
-                
+                <!-- Recipient Info -->
+                <div class="cert-recipient-text">This document proudly rewards</div>
                 <div class="student-name" id="cert-name">Student Name</div>
                 
-                <div class="cert-text">has successfully completed the comprehensive training requirements for</div>
-                
+                <!-- Accomplishment Statement -->
+                <div class="cert-course-text">who has fully completed the comprehensive syllabus requirements for</div>
                 <div class="course-name" id="cert-course">Course Name</div>
                 
-                <div class="cert-text" style="margin-top: 10px;">
-                    Achieving a grade of: <strong id="cert-grade" style="color: var(--cert-gold);">Distinction</strong>
+                <!-- Grade release statement -->
+                <div class="cert-grade-text">
+                    passing with the evaluation grade of <strong id="cert-grade">Distinction</strong>
                 </div>
 
+                <!-- Footer Details & Signatures -->
                 <div class="cert-footer">
+                    <!-- Left: Signatures -->
                     <div class="signature-block">
-                        <div class="signature-line"></div>
+                        <div class="signature-line sig-image-instructor"></div>
                         <div class="signature-title">Course Instructor</div>
                     </div>
                     
-                    <div class="seal">
-                        CYBERNET<br>OFFICIAL<br>SEAL
+                    <!-- Center: Verification QR & IDs -->
+                    <div class="qr-badge-container">
+                        <div class="qr-code-box">
+                            <img id="cert-qr" src="" alt="Verification QR">
+                        </div>
+                        <div class="cert-info-meta">
+                            <strong>Date Issued:</strong> <span id="cert-date">2026-05-19</span><br>
+                            <strong>Reg No:</strong> <span id="cert-reg-no">CCI-2026-0000</span><br>
+                            <strong>Cert ID:</strong> <span id="cert-id-text">CCI-CERT-0000</span>
+                        </div>
                     </div>
                     
+                    <!-- Right: Director Signature -->
                     <div class="signature-block">
-                        <div class="signature-line" style="display: flex; align-items: flex-end; justify-content: center; font-family: monospace; font-size: 1.1rem; padding-bottom: 5px;" id="cert-date">
-                            2026-05-18
-                        </div>
-                        <div class="signature-title">Date Issued</div>
+                        <div class="signature-line sig-image-director"></div>
+                        <div class="signature-title">Director of Studies</div>
                     </div>
                 </div>
-
-                <div class="cert-id-badge" id="cert-id-text">ID: CCI-CERT-00000</div>
             </div>
         </div>
     </div>
@@ -292,45 +482,71 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
         let supabase;
 
-        // Responsive A4 scaling logic for screens
+        // Dynamic scale handler to keep landscape layout pixel perfect on smaller devices
         function resizeCertificate() {
             const wrapper = document.getElementById('certificate-container');
             const outer = document.getElementById('certificate-container-outer');
             if (!wrapper || !outer) return;
             
-            const baseWidth = 1122; // approx 297mm in pixels
+            const baseWidth = 1122; // 297mm landscape equivalent in pixels
             const containerWidth = outer.clientWidth;
             
             if (containerWidth < baseWidth) {
                 const scale = containerWidth / baseWidth;
                 wrapper.style.transform = `scale(${scale})`;
-                // Calculate correct outer height so space is not wasted
-                outer.style.height = `${793 * scale}px`; // 210mm in pixels * scale
+                outer.style.height = `${793 * scale}px`; // 210mm height scale equivalent
             } else {
                 wrapper.style.transform = 'none';
                 outer.style.height = 'auto';
             }
         }
 
+        // Dedicated html2pdf.js download method
+        function triggerPDFDownload() {
+            const container = document.getElementById('certificate-container');
+            const certNo = document.getElementById('cert-reg-no').innerText;
+            
+            const options = {
+                margin:       0,
+                filename:     `Cybernet_Certificate_${certNo}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2.5, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            container.classList.add('exporting');
+            
+            html2pdf().from(container).set(options).save().then(() => {
+                container.classList.remove('exporting');
+                
+                // If this is automated background download call, close the tab after completion!
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('download') === 'true') {
+                    setTimeout(() => window.close(), 1500);
+                }
+            });
+        }
+
         async function loadCertificate() {
             const urlParams = new URLSearchParams(window.location.search);
             const certId = urlParams.get('id');
+            const autoDownload = urlParams.get('download') === 'true';
 
             if (!certId) {
-                // If visited directly without an ID, redirect to verify page beautifully
                 window.location.href = 'verify.html';
                 return;
             }
 
             try {
-                // Initialize Supabase inside the try-catch to catch any library loading errors
+                // Initialize Supabase safely
                 const supabaseLib = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
                 if (!supabaseLib) {
-                    throw new Error("Supabase SDK failed to load. Please check your internet connection.");
+                    throw new Error("Supabase library was unable to load. Check your internet connection.");
                 }
 
                 supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+                // Fetch certificate from Supabase database
                 const { data, error } = await supabase
                     .from('certificates')
                     .select('*')
@@ -340,28 +556,48 @@
                 if (error) throw error;
 
                 if (data) {
-                    // Populate DOM
+                    // Populate Document Text Node DOM Values
                     document.getElementById('cert-name').innerText = data.student_name;
                     document.getElementById('cert-course').innerText = data.course;
                     document.getElementById('cert-grade').innerText = data.status || 'Valid';
                     document.getElementById('cert-date').innerText = data.completion_date;
-                    document.getElementById('cert-id-text').innerText = 'ID: ' + data.cert_no;
-                    
-                    // Hide loading overlay
+                    document.getElementById('cert-reg-no').innerText = data.cert_no;
+                    document.getElementById('cert-id-text').innerText = data.cert_no;
+
+                    // Generate Dynamic QR Code linking back to the official verification path
+                    const verificationUrl = encodeURIComponent(`https://cybernet-institute.vercel.app/verify?id=${data.cert_no}`);
+                    document.getElementById('cert-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${verificationUrl}`;
+
+                    // Hide loading indicator screen
                     document.getElementById('loading-overlay').style.display = 'none';
                     
-                    // Trigger responsive scaling
+                    // Trigger scaling recalculation
                     resizeCertificate();
+
+                    // If 'download=true' was in parameters, initiate immediate automated PDF saving!
+                    if (autoDownload) {
+                        document.getElementById('loading-overlay').style.display = 'flex';
+                        document.getElementById('loading-text').innerText = "Generating Professional PDF Document...";
+                        setTimeout(triggerPDFDownload, 1000);
+                    }
                 } else {
-                    document.getElementById('loading-overlay').innerHTML = "<span style='color:red;'>Certificate Not Found or Invalid.</span>";
+                    document.getElementById('loading-overlay').innerHTML = `
+                        <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>Certificate Not Issued Yet</span>
+                        <p style='color:#4A5568; margin-top:8px;'>This Student Registration ID has no issued certificate associated with it.</p>
+                        <a href="verify.html" class="btn btn-outline" style="margin-top:20px;">Back to Verification Page</a>
+                    `;
                 }
             } catch (err) {
                 console.error(err);
-                document.getElementById('loading-overlay').innerHTML = `<span style='color:red; font-size:1.1rem; padding:20px; text-align:center;'>Error: ${err.message || err}</span>`;
+                document.getElementById('loading-overlay').innerHTML = `
+                    <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>System Error loading certificate</span>
+                    <p style='color:#4A5568; margin-top:8px;'>Details: ${err.message || err}</p>
+                    <a href="verify.html" class="btn btn-outline" style="margin-top:20px;">Back to Verification Page</a>
+                `;
             }
         }
 
-        // Initialize & Bind Resize (using readyState to prevent DOMContentLoaded race conditions)
+        // Initialize and Bind controls
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             loadCertificate();
             window.addEventListener('resize', resizeCertificate);
@@ -371,6 +607,9 @@
                 window.addEventListener('resize', resizeCertificate);
             });
         }
+
+        // Bind PDF click download action listener
+        document.getElementById('download-pdf-btn').addEventListener('click', triggerPDFDownload);
     </script>
 </body>
 </html>
