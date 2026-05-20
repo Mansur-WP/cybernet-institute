@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,10 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap"
+        rel="stylesheet">
+
     <!-- Supabase and html2pdf.js CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -49,7 +52,7 @@
             backdrop-filter: blur(10px);
             padding: 12px 20px;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             display: flex;
             gap: 12px;
@@ -70,35 +73,41 @@
             transition: all 0.2s ease;
         }
 
-        .btn-primary { 
-            background: var(--cert-navy); 
-            color: #ffffff; 
+        .btn-primary {
+            background: var(--cert-navy);
+            color: #ffffff;
         }
-        .btn-primary:hover { 
-            background: #1C2541; 
+
+        .btn-primary:hover {
+            background: #1C2541;
             transform: translateY(-1px);
         }
+
         .btn-accent {
             background: var(--cert-gold);
             color: #ffffff;
         }
+
         .btn-accent:hover {
             background: #B08A45;
             transform: translateY(-1px);
         }
-        .btn-outline { 
-            background: transparent; 
-            border: 1px solid #cbd5e1; 
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
             color: var(--cert-dark);
         }
-        .btn-outline:hover { 
-            background: #f8fafc; 
+
+        .btn-outline:hover {
+            background: #f8fafc;
         }
 
         /* Dynamic Scale Layout for Screen Display */
         .certificate-container-outer {
             width: 100%;
-            max-width: 1122px; /* Standard landscape container */
+            max-width: 1122px;
+            /* Standard landscape container */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -162,10 +171,34 @@
             border: 2px solid var(--cert-gold);
             z-index: 3;
         }
-        .top-left     { top: 12px; left: 12px; border-right: none; border-bottom: none; }
-        .top-right    { top: 12px; right: 12px; border-left: none; border-bottom: none; }
-        .bottom-left  { bottom: 12px; left: 12px; border-right: none; border-top: none; }
-        .bottom-right { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+        .top-left {
+            top: 12px;
+            left: 12px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .top-right {
+            top: 12px;
+            right: 12px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .bottom-left {
+            bottom: 12px;
+            left: 12px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .bottom-right {
+            bottom: 12px;
+            right: 12px;
+            border-left: none;
+            border-top: none;
+        }
 
         .cert-header {
             text-align: center;
@@ -344,7 +377,10 @@
         /* Loading & Error Screens */
         .loading-overlay {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: #ffffff;
             display: flex;
             flex-direction: column;
@@ -364,8 +400,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* PDF Render Modifications */
@@ -380,27 +421,32 @@
                 size: A4 landscape;
                 margin: 0;
             }
+
             body {
                 background: #ffffff;
                 padding: 0;
                 margin: 0;
             }
+
             .certificate-container-outer {
                 margin: 0;
                 height: auto !important;
             }
+
             .certificate-wrapper {
                 box-shadow: none;
                 width: 297mm;
                 height: 210mm;
                 transform: none !important;
             }
+
             .print-controls {
                 display: none !important;
             }
         }
     </style>
 </head>
+
 <body>
 
     <!-- Dynamic Actions Toolbar -->
@@ -416,9 +462,10 @@
             <!-- Loading Box -->
             <div class="loading-overlay" id="loading-overlay">
                 <div class="spinner"></div>
-                <div style="font-size: 1.25rem; font-weight: 600; color: var(--cert-navy);" id="loading-text">Verifying Academic Credentials...</div>
+                <div style="font-size: 1.25rem; font-weight: 600; color: var(--cert-navy);" id="loading-text">Verifying
+                    Academic Credentials...</div>
             </div>
-            
+
             <div class="certificate-border">
                 <!-- Corner Borders -->
                 <div class="corner-ornament top-left"></div>
@@ -431,16 +478,16 @@
                     <img src="/static/logo.png" alt="Cybernet Logo" class="cert-logo">
                     <h1 class="cert-title">Certificate of Completion</h1>
                     <div class="cert-subtitle">Cybernet Computer Institute certifies that</div>
-                </div>
-                
+        
+
                 <!-- Recipient Info -->
                 <div class="cert-recipient-text">This document proudly rewards</div>
                 <div class="student-name" id="cert-name">Student Name</div>
-                
+
                 <!-- Accomplishment Statement -->
                 <div class="cert-course-text">who has fully completed the comprehensive syllabus requirements for</div>
                 <div class="course-name" id="cert-course">Course Name</div>
-                
+
                 <!-- Grade release statement -->
                 <div class="cert-grade-text">
                     passing with the evaluation grade of <strong id="cert-grade">Distinction</strong>
@@ -453,7 +500,7 @@
                         <div class="signature-line sig-image-instructor"></div>
                         <div class="signature-title">Course Instructor</div>
                     </div>
-                    
+
                     <!-- Center: Verification QR & IDs -->
                     <div class="qr-badge-container">
                         <div class="qr-code-box">
@@ -465,7 +512,7 @@
                             <strong>Cert ID:</strong> <span id="cert-id-text">CCI-CERT-0000</span>
                         </div>
                     </div>
-                    
+
                     <!-- Right: Director Signature -->
                     <div class="signature-block">
                         <div class="signature-line sig-image-director"></div>
@@ -480,7 +527,7 @@
         // Supabase Credentials
         const SUPABASE_URL = 'https://kpbcrndtbtpsmqkcsrqf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
-        let supabase;
+        let supabaseClient;
         console.log('[CERTIFICATE] Inline certificate script loaded');
         window.CERTIFICATE_PAGE = { scriptLoaded: true };
 
@@ -489,10 +536,10 @@
             const wrapper = document.getElementById('certificate-container');
             const outer = document.getElementById('certificate-container-outer');
             if (!wrapper || !outer) return;
-            
+
             const baseWidth = 1122; // 297mm landscape equivalent in pixels
             const containerWidth = outer.clientWidth;
-            
+
             if (containerWidth < baseWidth) {
                 const scale = containerWidth / baseWidth;
                 wrapper.style.transform = `scale(${scale})`;
@@ -507,20 +554,20 @@
         function triggerPDFDownload() {
             const container = document.getElementById('certificate-container');
             const certNo = document.getElementById('cert-reg-no').innerText;
-            
+
             const options = {
-                margin:       0,
-                filename:     `Cybernet_Certificate_${certNo}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2.5, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                margin: 0,
+                filename: `Cybernet_Certificate_${certNo}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2.5, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
             container.classList.add('exporting');
-            
+
             html2pdf().from(container).set(options).save().then(() => {
                 container.classList.remove('exporting');
-                
+
                 // If this is automated background download call, close the tab after completion!
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('download') === 'true') {
@@ -557,7 +604,7 @@
                 console.log('[Certificate] ✓ Supabase library loaded');
 
                 // Initialize Supabase client
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 console.log('[Certificate] ✓ Supabase client initialized');
                 console.log('[Certificate] Project URL:', SUPABASE_URL);
 
@@ -567,7 +614,7 @@
                 console.log('[Certificate] Querying: SELECT * FROM certificates WHERE cert_no =', searchId);
 
                 // Add a timeout to prevent infinite loading
-                const queryPromise = supabase
+                const queryPromise = supabaseClient
                     .from('certificates')
                     .select('id, student_name, course, cert_no, completion_date, status, created_at')
                     .eq('cert_no', searchId)
@@ -584,7 +631,7 @@
                     console.error('[Certificate] ❌ Supabase error:', error);
                     console.error('[Certificate] Error code:', error.code);
                     console.error('[Certificate] Error details:', error.details);
-                    
+
                     // Provide specific error handling
                     if (error.code === '42P01') {
                         throw new Error('❌ Database table "certificates" does not exist. Admin must set up database first.');
@@ -596,10 +643,10 @@
                 }
 
                 console.log('[Certificate] Query returned:', data ? 'DATA FOUND' : 'NO DATA');
-                
+
                 if (data) {
                     console.log('[Certificate] ✓ Certificate found:', data);
-                    
+
                     // Safely populate document elements with null checks
                     const certName = document.getElementById('cert-name');
                     const certCourse = document.getElementById('cert-course');
@@ -638,7 +685,7 @@
                     const verificationUrl = `${currentDomain}/verify.html?id=${encodeURIComponent(data.cert_no)}`;
                     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verificationUrl)}`;
                     console.log('[Certificate] QR URL:', qrUrl);
-                    
+
                     certQR.src = qrUrl;
                     certQR.onerror = () => {
                         console.warn('[Certificate] QR code failed to load, using fallback');
@@ -649,7 +696,7 @@
                     loadingOverlay.style.display = 'none';
                     console.log('[Certificate] ✓ Loading overlay hidden, certificate displayed');
                     console.log('[Certificate] ===== CERTIFICATE LOAD SUCCESS =====');
-                    
+
                     // Trigger scaling recalculation
                     resizeCertificate();
 
@@ -668,7 +715,7 @@
                     console.log('  1. Certificate ID does not exist in database');
                     console.log('  2. No certificates have been issued yet');
                     console.log('  3. Database table is empty');
-                    
+
                     loadingOverlay.innerHTML = `
                         <div style="text-align: center; padding: 40px;">
                             <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
@@ -700,7 +747,7 @@
                 console.error('[Certificate] Error message:', err.message);
                 console.error('[Certificate] Stack:', err.stack);
                 console.log('[Certificate] ===== CERTIFICATE LOAD FAILED =====');
-                
+
                 let errorMessage = err.message;
                 let suggestedAction = 'Please contact support or try again later.';
 
@@ -763,4 +810,5 @@
         document.getElementById('download-pdf-btn').addEventListener('click', triggerPDFDownload);
     </script>
 </body>
+
 </html>
