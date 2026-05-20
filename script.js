@@ -148,115 +148,163 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            console.log('[Verify] Searching for ID:', certIdInput);
+
             // Show loading state
             resultBox.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <div style="width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--logo-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                    <p style="color: var(--text-muted);">Querying Cybernet verification records...</p>
+                <div style="text-align: center; padding: 40px;">
+                    <div style="width: 50px; height: 50px; border: 4px solid var(--border-color); border-top-color: var(--logo-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+                    <p style="color: var(--text-muted); font-size: 1.05rem;">Querying Cybernet verification records...</p>
                 </div>
             `;
             resultBox.classList.add('active');
             submitBtn.disabled = true;
 
             try {
-                // 1. First, search if the student exists in the 'students' table
-                const { data: studentData, error: studentError } = await supabaseClient
-                    .from('students')
-                    .select('fullname, reg_no, course, created_at')
-                    .eq('reg_no', certIdInput)
-                    .maybeSingle();
-
-                if (studentError) throw studentError;
-
-                // 2. Next, check if the certificate has been officially issued in the 'certificates' table
-                const lookupId = studentData ? studentData.reg_no : certIdInput;
+                // First check if certificate exists in 'certificates' table using cert_no
+                console.log('[Verify] Step 1: Checking certificates table for cert_no:', certIdInput);
                 const { data: certData, error: certError } = await supabaseClient
                     .from('certificates')
-                    .select('*')
-                    .eq('cert_no', lookupId)
+                    .select('id, student_name, course, cert_no, completion_date, status, created_at')
+                    .eq('cert_no', certIdInput)
                     .maybeSingle();
 
-                if (certError) throw certError;
-
-                // Case A: Student is registered, but certificate is NOT issued yet
-                if (studentData && !certData) {
-                    resultBox.innerHTML = `
-                        <div style="border-left: 4px solid #F59E0B; padding: 25px; background: rgba(245, 158, 11, 0.05); border-radius: 4px; text-align: left;">
-                            <h3 style="color: #D97706; margin-bottom: 10px; font-size: 1.25rem;">⚠ Certificate Not Issued</h3>
-                            <p style="margin-bottom: 8px; color: var(--text-main);">
-                                Student <strong>${studentData.fullname}</strong> is successfully registered under Registration ID <strong>${studentData.reg_no}</strong> for <strong>${studentData.course}</strong>.
-                            </p>
-                            <p style="color: #EF4444; font-weight: 600; font-size: 1.05rem; margin-top: 15px; border-top: 1px solid rgba(245, 158, 11, 0.2); padding-top: 12px;">
-                                "Certificate has not been issued yet."
-                            </p>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">
-                                Please complete course requirements or contact the administrative desk to request certificate release.
-                            </p>
-                        </div>
-                    `;
-                    return;
+                if (certError) {
+                    console.error('[Verify] Certificate table error:', certError);
+                    throw certError;
                 }
 
-                // Case B: Certificate is successfully verified
                 if (certData) {
+                    console.log('[Verify] Certificate found:', certData);
+                    // Certificate found - show verification details
                     resultBox.innerHTML = `
                         <div class="verification-card">
-                            <div class="verification-badge">✓ Verified Student Certificate</div>
+                            <div class="verification-badge" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 12px 20px; border-radius: 8px; display: inline-block; font-weight: 600; margin-bottom: 20px;">
+                                ✓ Certificate Verified
+                            </div>
                             
-                            <div class="verification-grid">
-                                <div class="grid-item">
-                                    <span class="grid-label">Student Name</span>
-                                    <span class="grid-val">${certData.student_name}</span>
+                            <div class="verification-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Student Name</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.student_name}</span>
                                 </div>
-                                <div class="grid-item">
-                                    <span class="grid-label">Course Completed</span>
-                                    <span class="grid-val">${certData.course}</span>
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Course Completed</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.course}</span>
                                 </div>
-                                <div class="grid-item">
-                                    <span class="grid-label">Certificate / Reg ID</span>
-                                    <span class="grid-val" style="color: var(--logo-blue);">${certData.cert_no}</span>
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Certificate ID</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--logo-blue); font-weight: 700; font-family: monospace;">${certData.cert_no}</span>
                                 </div>
-                                <div class="grid-item">
-                                    <span class="grid-label">Completion Date</span>
-                                    <span class="grid-val">${certData.completion_date}</span>
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Completion Date</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.completion_date}</span>
                                 </div>
-                                <div class="grid-item">
-                                    <span class="grid-label">Grade / Status</span>
-                                    <span class="grid-val grade-${certData.status.toLowerCase().replace(/\s+/g, '-')}">${certData.status || 'Valid'}</span>
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Status / Grade</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: #10B981; font-weight: 700;">${certData.status || 'Valid'}</span>
+                                </div>
+                                <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
+                                    <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Issued On</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${new Date(certData.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
 
-                            <div class="verification-actions">
-                                <a href="certificate.html?id=${certData.cert_no}" target="_blank" class="btn btn-primary">
-                                    👁 View Preview
+                            <div class="verification-actions" style="display: flex; gap: 12px; margin-top: 25px;">
+                                <a href="certificate.html?id=${encodeURIComponent(certData.cert_no)}" target="_blank" class="btn btn-primary" style="text-decoration: none; flex: 1; text-align: center;">
+                                    👁 View Certificate Preview
                                 </a>
-                                <a href="certificate.html?id=${certData.cert_no}&download=true" target="_blank" class="btn btn-outline" style="border: 1px solid var(--border-color);">
+                                <a href="certificate.html?id=${encodeURIComponent(certData.cert_no)}&download=true" target="_blank" class="btn btn-outline" style="text-decoration: none; flex: 1; text-align: center; border: 1px solid var(--border-color);">
                                     📥 Download PDF
                                 </a>
                             </div>
                         </div>
                     `;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Second fallback: check if it's a registration number in 'students' table
+                console.log('[Verify] Step 2: Certificate not found, checking students table for reg_no:', certIdInput);
+                const { data: studentData, error: studentError } = await supabaseClient
+                    .from('students')
+                    .select('id, fullname, reg_no, course, created_at')
+                    .eq('reg_no', certIdInput)
+                    .maybeSingle();
+
+                if (studentError) {
+                    console.error('[Verify] Student table error:', studentError);
+                    throw studentError;
+                }
+
+                if (studentData) {
+                    console.log('[Verify] Student found, but no certificate issued:', studentData);
+                    // Student is registered, but certificate is NOT issued yet
+                    resultBox.innerHTML = `
+                        <div style="border-left: 4px solid #F59E0B; padding: 25px; background: rgba(245, 158, 11, 0.05); border-radius: 8px; text-align: left;">
+                            <h3 style="color: #D97706; margin-top: 0; margin-bottom: 15px; font-size: 1.25rem;">⚠️ Certificate Not Issued Yet</h3>
+                            <p style="margin-bottom: 12px; color: var(--text-main); font-size: 1.05rem;">
+                                Student <strong style="color: var(--cert-navy);">${studentData.fullname}</strong> is successfully registered.
+                            </p>
+                            <div style="background: #fff; padding: 12px; border-radius: 6px; border-left: 3px solid #F59E0B; margin: 15px 0;">
+                                <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
+                                    <strong>Registration ID:</strong> ${studentData.reg_no}
+                                </p>
+                                <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
+                                    <strong>Course:</strong> ${studentData.course}
+                                </p>
+                                <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
+                                    <strong>Registered:</strong> ${new Date(studentData.created_at).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <p style="color: #EF4444; font-weight: 600; font-size: 1.05rem; margin: 15px 0; padding-top: 12px; border-top: 1px solid rgba(245, 158, 11, 0.2);">
+                                Certificate has not been issued yet.
+                            </p>
+                            <p style="font-size: 0.95rem; color: var(--text-muted); margin: 10px 0;">
+                                Your certificate will be available once you complete all course requirements. Please contact the administrative desk or check back later.
+                            </p>
+                        </div>
+                    `;
+                    submitBtn.disabled = false;
                     return;
                 }
 
                 // Case C: ID not found anywhere in our systems
+                console.log('[Verify] No record found for ID:', certIdInput);
                 resultBox.innerHTML = `
-                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 4px; text-align: left;">
-                        <h3 style="color: #DC2626; margin-bottom: 10px; font-size: 1.25rem;">✗ Verification Failed</h3>
-                        <p style="color: var(--text-main);">The Certificate ID "<strong>${certIdInput}</strong>" could not be verified.</p>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
-                            Ensure the ID is typed correctly (including prefixes like CCI-2026-). If you believe this is an error, please reach out to academic support.
+                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 8px; text-align: left;">
+                        <h3 style="color: #DC2626; margin-top: 0; margin-bottom: 15px; font-size: 1.25rem;">✗ Record Not Found</h3>
+                        <p style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 12px;">
+                            The ID "<strong style="color: var(--cert-navy); font-family: monospace;">${certIdInput}</strong>" was not found in our records.
+                        </p>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); margin: 10px 0;">
+                            Possible reasons:
+                        </p>
+                        <ul style="color: var(--text-muted); font-size: 0.95rem; margin: 10px 0 15px; padding-left: 20px;">
+                            <li>The Registration ID or Certificate ID might be typed incorrectly (including hyphens)</li>
+                            <li>The student may not be registered in our system yet</li>
+                            <li>The student registration may have been removed</li>
+                        </ul>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); margin: 15px 0; padding-top: 12px; border-top: 1px solid rgba(239, 68, 68, 0.2);">
+                            If you believe this is an error, please contact our administrative support team at <strong>cybernetcafeng@gmail.com</strong> or call <strong>+234 806 571-2820</strong>.
                         </p>
                     </div>
                 `;
 
             } catch (error) {
-                console.error('Verification Error:', error);
+                console.error('[Verify] Error during verification:', error);
                 resultBox.innerHTML = `
-                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 4px; text-align: left;">
-                        <h3 style="color: #DC2626; margin-bottom: 10px;">✗ System Error</h3>
-                        <p style="color: var(--text-main);">There was an error communicating with the verification database.</p>
-                        <p style="font-size: 0.85em; color: #991b1b; margin-top: 10px;">Details: ${error.message || 'Unknown network error'}</p>
+                    <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 8px; text-align: left;">
+                        <h3 style="color: #DC2626; margin-top: 0; margin-bottom: 15px; font-size: 1.25rem;">❌ System Error</h3>
+                        <p style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 12px;">
+                            There was an error communicating with the verification database.
+                        </p>
+                        <p style="font-size: 0.85rem; color: #991b1b; margin: 10px 0; font-family: monospace; background: #fee2e2; padding: 10px; border-radius: 4px; border-left: 3px solid #dc2626;">
+                            ${error.message || 'Unknown network error'}
+                        </p>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 15px;">
+                            Please try again in a few moments. If the problem persists, contact support.
+                        </p>
                     </div>
                 `;
             } finally {
@@ -268,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const urlCertId = urlParams.get('id');
         if (urlCertId) {
+            console.log('[Verify] Auto-search triggered from URL parameter:', urlCertId);
             document.getElementById('cert-id').value = urlCertId;
             // Dispatch a submit event cleanly to start verification
             verifyForm.dispatchEvent(new Event('submit'));

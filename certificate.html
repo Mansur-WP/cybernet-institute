@@ -481,6 +481,8 @@
         const SUPABASE_URL = 'https://kpbcrndtbtpsmqkcsrqf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
         let supabase;
+        console.log('[CERTIFICATE] Inline certificate script loaded');
+        window.CERTIFICATE_PAGE = { scriptLoaded: true };
 
         // Dynamic scale handler to keep landscape layout pixel perfect on smaller devices
         function resizeCertificate() {
@@ -531,71 +533,220 @@
             const urlParams = new URLSearchParams(window.location.search);
             const certId = urlParams.get('id');
             const autoDownload = urlParams.get('download') === 'true';
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingText = document.getElementById('loading-text');
+
+            console.log('[Certificate] ===== CERTIFICATE LOAD START =====');
+            console.log('[Certificate] URL:', window.location.href);
+            console.log('[Certificate] Cert ID from URL:', certId);
+            console.log('[Certificate] Auto Download:', autoDownload);
 
             if (!certId) {
+                console.warn('[Certificate] No ID parameter provided, redirecting to verify page');
                 window.location.href = 'verify.html';
                 return;
             }
 
+            console.log('[Certificate] Loading certificate with ID:', certId);
+
             try {
-                // Initialize Supabase safely
-                const supabaseLib = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
-                if (!supabaseLib) {
-                    throw new Error("Supabase library was unable to load. Check your internet connection.");
+                // Check if Supabase is loaded
+                if (typeof window.supabase === 'undefined') {
+                    throw new Error("❌ Supabase library did not load. Check internet connection or CDN availability.");
                 }
+                console.log('[Certificate] ✓ Supabase library loaded');
 
-                supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                // Initialize Supabase client
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('[Certificate] ✓ Supabase client initialized');
+                console.log('[Certificate] Project URL:', SUPABASE_URL);
 
-                // Fetch certificate from Supabase database
-                const { data, error } = await supabase
+                // Prepare certificate ID (trim and uppercase)
+                const searchId = certId.trim().toUpperCase();
+                console.log('[Certificate] Searching for cert_no:', searchId);
+                console.log('[Certificate] Querying: SELECT * FROM certificates WHERE cert_no =', searchId);
+
+                // Add a timeout to prevent infinite loading
+                const queryPromise = supabase
                     .from('certificates')
-                    .select('*')
-                    .eq('cert_no', certId)
+                    .select('id, student_name, course, cert_no, completion_date, status, created_at')
+                    .eq('cert_no', searchId)
                     .maybeSingle();
 
-                if (error) throw error;
+                // 10-second timeout
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('⏱️ Database query timeout (10s). Supabase may be unreachable or credentials may be invalid.')), 10000)
+                );
 
+                const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
+
+                if (error) {
+                    console.error('[Certificate] ❌ Supabase error:', error);
+                    console.error('[Certificate] Error code:', error.code);
+                    console.error('[Certificate] Error details:', error.details);
+                    
+                    // Provide specific error handling
+                    if (error.code === '42P01') {
+                        throw new Error('❌ Database table "certificates" does not exist. Admin must set up database first.');
+                    } else if (error.message && error.message.includes('403')) {
+                        throw new Error('❌ Access Denied (403): RLS policy not configured. Admin must enable public SELECT policy.');
+                    } else {
+                        throw error;
+                    }
+                }
+
+                console.log('[Certificate] Query returned:', data ? 'DATA FOUND' : 'NO DATA');
+                
                 if (data) {
-                    // Populate Document Text Node DOM Values
-                    document.getElementById('cert-name').innerText = data.student_name;
-                    document.getElementById('cert-course').innerText = data.course;
-                    document.getElementById('cert-grade').innerText = data.status || 'Valid';
-                    document.getElementById('cert-date').innerText = data.completion_date;
-                    document.getElementById('cert-reg-no').innerText = data.cert_no;
-                    document.getElementById('cert-id-text').innerText = data.cert_no;
+                    console.log('[Certificate] ✓ Certificate found:', data);
+                    
+                    // Safely populate document elements with null checks
+                    const certName = document.getElementById('cert-name');
+                    const certCourse = document.getElementById('cert-course');
+                    const certGrade = document.getElementById('cert-grade');
+                    const certDate = document.getElementById('cert-date');
+                    const certRegNo = document.getElementById('cert-reg-no');
+                    const certIdText = document.getElementById('cert-id-text');
+                    const certQR = document.getElementById('cert-qr');
 
-                    // Generate Dynamic QR Code linking back to the official verification path
-                    const verificationUrl = encodeURIComponent(`https://cybernet-institute.vercel.app/verify?id=${data.cert_no}`);
-                    document.getElementById('cert-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${verificationUrl}`;
+                    // Verify all elements exist
+                    const missingElements = [];
+                    if (!certName) missingElements.push('cert-name');
+                    if (!certCourse) missingElements.push('cert-course');
+                    if (!certGrade) missingElements.push('cert-grade');
+                    if (!certDate) missingElements.push('cert-date');
+                    if (!certRegNo) missingElements.push('cert-reg-no');
+                    if (!certIdText) missingElements.push('cert-id-text');
+                    if (!certQR) missingElements.push('cert-qr');
+
+                    if (missingElements.length > 0) {
+                        throw new Error('❌ HTML Elements Missing: ' + missingElements.join(', '));
+                    }
+                    console.log('[Certificate] ✓ All HTML elements found');
+
+                    // Populate Document Text Node DOM Values
+                    certName.innerText = data.student_name || 'Unknown Student';
+                    certCourse.innerText = data.course || 'Unknown Course';
+                    certGrade.innerText = data.status || 'Valid';
+                    certDate.innerText = data.completion_date || new Date().toISOString().split('T')[0];
+                    certRegNo.innerText = data.cert_no || searchId;
+                    certIdText.innerText = data.cert_no || searchId;
+                    console.log('[Certificate] ✓ Certificate data populated');
+
+                    // Generate Dynamic QR Code
+                    const currentDomain = window.location.origin;
+                    const verificationUrl = `${currentDomain}/verify.html?id=${encodeURIComponent(data.cert_no)}`;
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(verificationUrl)}`;
+                    console.log('[Certificate] QR URL:', qrUrl);
+                    
+                    certQR.src = qrUrl;
+                    certQR.onerror = () => {
+                        console.warn('[Certificate] QR code failed to load, using fallback');
+                        certQR.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ffffff" width="100" height="100"/%3E%3Ctext x="50" y="50" text-anchor="middle" dy=".3em" font-family="Arial" font-size="12" fill="%23000000"%3EQR%3C/text%3E%3C/svg%3E';
+                    };
 
                     // Hide loading indicator screen
-                    document.getElementById('loading-overlay').style.display = 'none';
+                    loadingOverlay.style.display = 'none';
+                    console.log('[Certificate] ✓ Loading overlay hidden, certificate displayed');
+                    console.log('[Certificate] ===== CERTIFICATE LOAD SUCCESS =====');
                     
                     // Trigger scaling recalculation
                     resizeCertificate();
 
                     // If 'download=true' was in parameters, initiate immediate automated PDF saving!
                     if (autoDownload) {
-                        document.getElementById('loading-overlay').style.display = 'flex';
-                        document.getElementById('loading-text').innerText = "Generating Professional PDF Document...";
-                        setTimeout(triggerPDFDownload, 1000);
+                        console.log('[Certificate] Auto-download initiated');
+                        loadingOverlay.style.display = 'flex';
+                        loadingText.innerText = "Generating Professional PDF Document...";
+                        setTimeout(triggerPDFDownload, 1500);
                     }
                 } else {
-                    document.getElementById('loading-overlay').innerHTML = `
-                        <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>Certificate Not Issued Yet</span>
-                        <p style='color:#4A5568; margin-top:8px;'>This Student Registration ID has no issued certificate associated with it.</p>
-                        <a href="verify.html" class="btn btn-outline" style="margin-top:20px;">Back to Verification Page</a>
+                    // Certificate not found
+                    console.warn('[Certificate] Certificate not found with ID:', searchId);
+                    console.warn('[Certificate] Database returned: null/undefined');
+                    console.log('[Certificate] Possible causes:');
+                    console.log('  1. Certificate ID does not exist in database');
+                    console.log('  2. No certificates have been issued yet');
+                    console.log('  3. Database table is empty');
+                    
+                    loadingOverlay.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                            <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>Certificate Not Found</span>
+                            <p style='color:#4A5568; margin-top:12px; font-size: 1.05rem;'>
+                                Certificate ID "<strong>${searchId}</strong>" does not exist in our records.
+                            </p>
+                            <p style='color:#9CA3AF; margin-top:8px; font-size: 0.95rem;'>
+                                <strong>Possible causes:</strong>
+                                <ul style="text-align: left; display: inline-block; margin: 10px 0;">
+                                    <li>Certificate ID may be incorrect</li>
+                                    <li>Certificate may not have been issued yet</li>
+                                    <li>Database may be empty (admin must issue certificate first)</li>
+                                </ul>
+                            </p>
+                            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                                <a href="verify.html" class="btn btn-outline" style="text-decoration: none;">Back to Verification</a>
+                                <a href="contact.html" class="btn btn-primary" style="text-decoration: none;">Contact Support</a>
+                            </div>
+                            <p style='color:#6B7280; margin-top:20px; font-size: 0.85rem; font-family: monospace;'>
+                                [DEBUG] ID searched: ${searchId}
+                            </p>
+                        </div>
                     `;
+                    loadingOverlay.style.display = 'flex';
                 }
             } catch (err) {
-                console.error(err);
-                document.getElementById('loading-overlay').innerHTML = `
-                    <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>System Error loading certificate</span>
-                    <p style='color:#4A5568; margin-top:8px;'>Details: ${err.message || err}</p>
-                    <a href="verify.html" class="btn btn-outline" style="margin-top:20px;">Back to Verification Page</a>
+                console.error('[Certificate] ❌ FATAL ERROR:', err);
+                console.error('[Certificate] Error message:', err.message);
+                console.error('[Certificate] Stack:', err.stack);
+                console.log('[Certificate] ===== CERTIFICATE LOAD FAILED =====');
+                
+                let errorMessage = err.message;
+                let suggestedAction = 'Please contact support or try again later.';
+
+                // Provide specific guidance based on error type
+                if (err.message.includes('Supabase library')) {
+                    suggestedAction = 'Check your internet connection and ensure Supabase CDN is accessible.';
+                } else if (err.message.includes('database table')) {
+                    suggestedAction = 'Admin must set up Supabase database (see SUPABASE_SETUP_GUIDE.md).';
+                } else if (err.message.includes('RLS policy')) {
+                    suggestedAction = 'Admin must configure RLS policies (see SUPABASE_SETUP_GUIDE.md).';
+                } else if (err.message.includes('timeout')) {
+                    suggestedAction = 'Supabase connection is slow or down. Try again in a moment.';
+                }
+
+                loadingOverlay.innerHTML = `
+                    <div style="text-align: center; padding: 40px; max-width: 600px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
+                        <span style='color:#ED1C24; font-weight:700; font-size:1.3rem;'>System Error</span>
+                        <p style='color:#4A5568; margin-top:12px; font-size: 1.05rem;'>
+                            Failed to load the certificate.
+                        </p>
+                        <div style='background: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin: 15px 0; border-radius: 4px; text-align: left;'>
+                            <p style='margin: 0; color: #991b1b; font-weight: 600; font-family: monospace; font-size: 0.9rem; word-break: break-word;'>
+                                ${errorMessage}
+                            </p>
+                        </div>
+                        <p style='color: #6B7280; font-size: 0.95rem; margin: 15px 0;'>
+                            ${suggestedAction}
+                        </p>
+                        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="location.reload()" class="btn btn-outline" style="border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 6px; cursor: pointer; background: #f9fafb; color: #1f2937;">Try Again</button>
+                            <a href="verify.html" class="btn btn-primary" style="text-decoration: none; padding: 10px 20px; border-radius: 6px; background: #0B132B; color: white;">Back to Verification</a>
+                        </div>
+                        <p style='color: #9CA3AF; margin-top:20px; font-size: 0.8rem;'>
+                            Check browser console (F12) for detailed debug information.
+                        </p>
+                    </div>
                 `;
+                loadingOverlay.style.display = 'flex';
             }
         }
+
+        // Expose helpers globally in case the browser scope is not attaching declarations automatically
+        window.triggerPDFDownload = triggerPDFDownload;
+        window.resizeCertificate = resizeCertificate;
+        window.loadCertificate = loadCertificate;
 
         // Initialize and Bind controls
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
