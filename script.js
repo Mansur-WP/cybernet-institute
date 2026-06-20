@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if certificate is issued for this student
                 const { data: certData } = await supabaseClient
                     .from('certificates')
-                    .select('cert_no, status, completion_date')
+                    .select('id, cert_no, student_name, course, status, completion_date, created_at')
                     .eq('cert_no', regNo)
                     .maybeSingle();
 
