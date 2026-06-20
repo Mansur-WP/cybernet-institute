@@ -302,31 +302,13 @@
             position: relative;
         }
 
-        /* High-quality Digital Signatures (Styled placeholder script fonts) */
-        .sig-image-director::after {
-            content: "Mansur W.P.";
-            position: absolute;
-            bottom: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-cursive);
-            font-size: 2.2rem;
-            color: #1a365d;
-            opacity: 0.85;
-            white-space: nowrap;
-        }
-
-        .sig-image-instructor::after {
-            content: "Cybernet Academic";
-            position: absolute;
-            bottom: 0px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-cursive);
-            font-size: 2.2rem;
-            color: #2b6cb0;
-            opacity: 0.85;
-            white-space: nowrap;
+        /* Signature images */
+        .signature-img {
+            width: 150px;
+            height: 55px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
         }
 
         .signature-title {
@@ -497,7 +479,9 @@
                 <div class="cert-footer">
                     <!-- Left: Signatures -->
                     <div class="signature-block">
-                        <div class="signature-line sig-image-instructor"></div>
+                        <div class="signature-line" style="border-bottom: none; height: 55px;">
+                            <img class="signature-img" id="signature-instructor" src="/static/sig_instructor.png" alt="Course Instructor Signature">
+                        </div>
                         <div class="signature-title">Course Instructor</div>
                     </div>
 
@@ -515,7 +499,9 @@
 
                     <!-- Right: Director Signature -->
                     <div class="signature-block">
-                        <div class="signature-line sig-image-director"></div>
+                        <div class="signature-line" style="border-bottom: none; height: 55px;">
+                            <img class="signature-img" id="signature-director" src="/static/sig_director.png" alt="Director of Studies Signature">
+                        </div>
                         <div class="signature-title">Director of Studies</div>
                     </div>
                 </div>
@@ -678,6 +664,13 @@
                     certDate.innerText = data.completion_date || new Date().toISOString().split('T')[0];
                     certRegNo.innerText = data.cert_no || searchId;
                     certIdText.innerText = data.cert_no || searchId;
+
+                    // Ensure signatures render (fallback if images fail)
+                    const sigDirector = document.getElementById('signature-director');
+                    const sigInstructor = document.getElementById('signature-instructor');
+                    if (sigDirector) sigDirector.onerror = () => { sigDirector.style.display = 'none'; };
+                    if (sigInstructor) sigInstructor.onerror = () => { sigInstructor.style.display = 'none'; };
+
                     console.log('[Certificate] ✓ Certificate data populated');
 
                     // Generate Dynamic QR Code
