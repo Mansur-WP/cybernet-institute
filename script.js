@@ -422,7 +422,15 @@ document.addEventListener('DOMContentLoaded', () => {
             tbody.innerHTML = data.map(s => `
                 <tr>
                     <td style="font-weight: 600;">${s.reg_no}</td>
-                    <td>${s.fullname}<br><small style="color: var(--text-muted);">${s.email}</small></td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-outline btn-sm"
+                                style="padding: 6px 12px;"
+                                onclick="window.showStudentDetails('${s.reg_no}')">
+                            ${s.fullname}
+                        </button>
+                        <br><small style="color: var(--text-muted);">${s.email}</small>
+                    </td>
                     <td>${s.course}</td>
                     <td>${new Date(s.created_at).toLocaleDateString()}</td>
                     <td>
@@ -433,6 +441,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>
             `).join('');
         }
+
+        window.showStudentDetails = async function(regNo) {
+            if (!regNo) return;
+
+            Swal.fire({
+                title: 'Loading student details...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const { data: studentData, error: studentError } = await supabaseClient
+                    .from('students')
+                    .select('fullname, phone, email, address, course, reg_no, created_at')
+                    .eq('reg_no', regNo)
+                    .maybeSingle();
+
+                if (studentError) throw studentError;
+                if (!studentData) {
+                    Swal.fire({ icon: 'error', title: 'Student not found', text: `No student found for Reg ID: ${regNo}` });
+                    return;
+                }
+
+                // Check if certificate is issued for this student
+                const { data: certData } = await supabaseClient
+                    .from('certificates')
+                    .select('cert_no, status, completion_date')
+                    .eq('cert_no', regNo)
+                    .maybeSingle();
+
+                const certIssued = !!certData;
+                const certStatus = certIssued ? (certData.status || 'Valid') : 'Not Issued Yet';
+
+                const enrolledDate = studentData.created_at ? new Date(studentData.created_at).toLocaleDateString() : 'N/A';
+                const addressText = studentData.address || 'N/A';
+                const phoneText = studentData.phone || 'N/A';
+
+                Swal.fire({
+                    icon: certIssued ? 'success' : 'warning',
+                    title: 'Student Details',
+                    html: `
+                        <div style="text-align:left;">
+                            <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+                                <div>
+                                    <div style="color: var(--text-muted); font-weight:700; text-transform:uppercase; font-size:0.85rem;">Name</div>
+                                    <div style="font-size:1.25rem; font-weight:800; color: var(--primary-navy);">${studentData.fullname}</div>
+                                </div>
+                                <div>
+                                    <div style="color: var(--text-muted); font-weight:700; text-transform:uppercase; font-size:0.85rem;">Course</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color: var(--logo-blue);">${studentData.course}</div>
+                                </div>
+                            </div>
+
+                            <div style="background:#f8fafc; border:1px solid var(--border-color); border-radius:10px; padding:14px 16px;">
+                                <div style="margin:6px 0; font-size:0.95rem;"><strong>Reg No:</strong> <span style="font-family:monospace; color: var(--primary-navy); font-weight:700;">${studentData.reg_no}</span></div>
+                                <div style="margin:6px 0; font-size:0.95rem;"><strong>Enrolled Date:</strong> ${enrolledDate}</div>
+                                <div style="margin:6px 0; font-size:0.95rem;"><strong>Phone:</strong> ${phoneText}</div>
+                                <div style="margin:6px 0; font-size:0.95rem;"><strong>Email:</strong> ${studentData.email || 'N/A'}</div>
+                                <div style="margin:6px 0; font-size:0.95rem;"><strong>Address:</strong> ${addressText}</div>
+
+                                <div style="margin:10px 0 0; padding-top:10px; border-top:1px dashed rgba(0,0,0,0.1);">
+                                    <div style="color: var(--text-muted); font-weight:700; text-transform:uppercase; font-size:0.85rem; margin-bottom:6px;">Certificate Status</div>
+                                    <div style="font-size:1.05rem; font-weight:800; color:${certIssued ? '#10B981' : '#F59E0B'};">${certStatus}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'System Error', text: error.message || 'Failed to load student details.' });
+            }
+        };
 
         async function fetchCertificates() {
             const tbody = document.getElementById('certificates-table-body');
