@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const phoneStr = document.getElementById('phone').value.trim();
             const gender = document.getElementById('gender').value;
             const course = document.getElementById('course').value;
+            const addressEl = document.getElementById('address');
+            const address = addressEl ? addressEl.value.trim() : '';
             
             // 2. Validate Empty Fields (fallback, though HTML 'required' handles most)
             if (!fullName || !email || !phoneStr || !gender || !course) {
@@ -95,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             phone: phone, 
                             gender: gender, 
                             course: course, 
+                            address: address || null,
                             reg_no: regNo 
                         }
                     ]);
