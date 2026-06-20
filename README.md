@@ -8,16 +8,22 @@ A modern, full-stack web application built for the Cybernet Computer Institute. 
   - Clean, responsive registration form.
   - Auto-generation of unique Registration IDs (e.g., `CCI-2026-0001`).
   - Duplicate email prevention.
+  - **Optional Address Capture** (saved to Supabase `students.address`).
 - **Certificate Verification (`verify.html`)**
   - Public portal for verifying the authenticity of student certificates.
-  - Instant database lookup returning student grade, course, and date of completion.
+  - Instant database lookup returning certificate status and issued date.
 - **Secure Admin Dashboard (`admin.html`)**
   - Protected by **Supabase Authentication** (Email & Password).
   - View real-time tables of registered students and issued certificates.
   - **One-Click Issuance**: Easily issue official certificates to registered students with matching IDs.
+  - Student details modal now shows the **certificate issued details** (issued date/status).
+- **Certificate Preview (`certificate.html`)**
+  - Certificate preview with dynamic QR code.
+  - **Real signature images** for Director and Course Instructor (from `/static/sig_director.png` and `/static/sig_instructor.png`).
 - **Premium UI/UX**
   - Custom, lightweight Vanilla CSS styling.
   - Beautiful modal popups powered by SweetAlert2.
+
 
 ## 🛠️ Tech Stack
 
