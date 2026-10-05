@@ -13,10 +13,10 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="main-navbar">
         <div class="container navbar-content">
             <div class="logo">
-                <a href="index.html">
+                <a href="index.html" class="logo-link">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </a>
             </div>
@@ -24,33 +24,173 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html" class="active">About</a></li>
                 <li><a href="courses.html">Courses</a></li>
-                <li><a href="verify.html">Verify Certificate</a></li>
+                <li><a href="verify.html">Verify</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="nav-cta">
-                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+                <a href="register.html" class="btn btn-primary btn-sm">Register Now</a>
             </div>
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html" class="active">About Us</a>
+            <a href="courses.html">Our Courses</a>
+            <a href="verify.html">Verify Certificate</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <a href="register.html" class="btn btn-primary btn-full">Register Now</a>
+    </div>
 
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1>About Our Institute</h1>
-            <p>Dedicated to excellence in practical computer and digital skills education since 2020.</p>
+            <span class="label">About Cybernet</span>
+            <h1>Dedicated to Practical Computer Education</h1>
+            <p>Empowering individuals and learners in Kano with real-world digital skills since 2020.</p>
         </div>
     </header>
 
-    <!-- Content Section -->
-    <section class="content-section features">
+    <!-- Mission & Overview Section -->
+    <section class="features" style="background-color: var(--white);">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h2>Our Mission & Vision</h2>
-                    <p>At Cybernet Computer Institute, our mission is to empower individuals and community members by providing accessible, practical, and top-quality computer and AI training. We equip students, job seekers, and working professionals with tangible digital competencies that elevate their academic, professional, and personal productivity.</p>
+                    <h2>Our Mission & Training Focus</h2>
+                    <p class="hero-lead">At Cybernet Computer Institute, our goal is to bridge the digital skills gap by providing structured, accessible, and highly practical computer training.</p>
+                    <p style="color: var(--text-muted); margin-bottom: 24px; line-height: 1.65;">We believe true digital competence comes from direct practice. Our training center in Kano provides students, job seekers, and working professionals with the hands-on experience needed to type, create professional documents, analyze data with spreadsheets, present ideas, and responsibly leverage modern AI tools.</p>
+                    
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                        <a href="courses.html" class="btn btn-primary">Browse Training Courses</a>
+                        <a href="contact.html" class="btn btn-outline">Visit Our Campus</a>
+                    </div>
                 </div>
-                <div class="hero-image">
-                    <img src="static/about-institute.jpg" alt="Cybernet Computer Institute Building" class="main-hero-img">
+
+                <!-- Neutral Educational Card -->
+                <div class="hero-visual-card" style="background: var(--bg-light);">
+                    <div class="hero-visual-header">
+                        <div class="hero-visual-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                            </svg>
+                        </div>
+                        <div class="hero-visual-header-text">
+                            <h3>Institute Pillars</h3>
+                            <p>What defines our training approach</p>
+                        </div>
+                    </div>
+
+                    <div class="hero-features-list">
+                        <div class="hero-feature-item" style="background: var(--white);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <div class="hero-feature-item-text">
+                                <h4>Hands-On Lab Practice</h4>
+                                <p>Students spend the majority of class time practicing directly on computers.</p>
+                            </div>
+                        </div>
+
+                        <div class="hero-feature-item" style="background: var(--white);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <div class="hero-feature-item-text">
+                                <h4>Step-by-Step Curriculum</h4>
+                                <p>Structured courses that guide learners from basic mouse operations to productivity.</p>
+                            </div>
+                        </div>
+
+                        <div class="hero-feature-item" style="background: var(--white);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <div class="hero-feature-item-text">
+                                <h4>Verifiable Certificates</h4>
+                                <p>Every successful graduate earns a certificate with online QR verification.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-campus-badge">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Sauna Titin Shekarau, Off Hadejia Road, Nassarawa, Kano</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values Section -->
+    <section class="features" style="background-color: var(--bg-light); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Core Principles</h2>
+                <p>How we ensure every learner receives attentive, quality instruction.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3>Practical Competency</h3>
+                    <p>We emphasize real-world computer tasks rather than abstract theory, so you can apply skills immediately.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3>Supportive Environment</h3>
+                    <p>Our instructors take time to assist each student, making learning comfortable for complete beginners.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Relevant Curriculum</h3>
+                    <p>From fundamental typing and Microsoft Office to modern AI literacy, our courses reflect current digital needs.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Integrity & Trust</h3>
+                    <p>Authentic verification records ensure your certificate is respected and verifiable anywhere.</p>
                 </div>
             </div>
         </div>
@@ -60,27 +200,31 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-info">
-                <div class="logo">
+                <div class="logo-box">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </div>
-                <p>Excellence in IT education since 2020. Providing quality training for the next generation of digital leaders.</p>
+                <p>CYBERNET COMPUTER INSTITUTE</p>
+                <p style="font-size: 0.85rem; margin-top: 4px;">Excellence in IT education since 2020. Practical computer training and digital skills in Kano, Nigeria.</p>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
-                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="courses.html">Our Courses</a></li>
                     <li><a href="verify.html">Verify Certificate</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p>Sauna Titin Shekarau Opp Nigerian Malaysia, Off Hadejia Road, Nassarawa L.G.A., Kano State.</p>
-                <p style="margin-top: 10px;">Email: cybernetcafeng@gmail.com</p>
-                <p>Phone: 09042834479</p>
-                <p>Phone: 08166350579</p>
+                <h4>Campus Contact</h4>
+                <p>
+                    Sauna Titin Shekarau Opp Nigerian Malaysia,<br>
+                    Off Hadejia Road, Nassarawa L.G.A.,<br>
+                    Kano State, Nigeria
+                </p>
+                <p>Email: <a href="mailto:cybernetcafeng@gmail.com">cybernetcafeng@gmail.com</a></p>
+                <p>Phone: <a href="tel:09042834479">09042834479</a> / <a href="tel:08166350579">08166350579</a></p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -90,5 +234,6 @@
         </div>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>

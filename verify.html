@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Certificate | Cybernet Computer Institute</title>
-    <meta name="description" content="Validate the authenticity of certificates and registrations issued by Cybernet Computer Institute in Kano State, Nigeria.">
+    <meta name="description" content="Validate the authenticity of certificates and student registrations issued by Cybernet Computer Institute in Kano State, Nigeria.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -13,10 +13,10 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="main-navbar">
         <div class="container navbar-content">
             <div class="logo">
-                <a href="index.html">
+                <a href="index.html" class="logo-link">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </a>
             </div>
@@ -24,36 +24,58 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="courses.html">Courses</a></li>
-                <li><a href="verify.html" class="active">Verify Certificate</a></li>
+                <li><a href="verify.html" class="active">Verify</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="nav-cta">
-                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+                <a href="register.html" class="btn btn-primary btn-sm">Register Now</a>
             </div>
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="courses.html">Our Courses</a>
+            <a href="verify.html" class="active">Verify Certificate</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <a href="register.html" class="btn btn-primary btn-full">Register Now</a>
+    </div>
 
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1>Certificate & Student Verification</h1>
-            <p>Validate the authenticity of certifications and student registrations issued by Cybernet Computer Institute.</p>
+            <span class="label">Credential Verification</span>
+            <h1>Certificate & Registration Verification</h1>
+            <p>Validate the authenticity of certifications and student records issued by Cybernet Computer Institute.</p>
         </div>
     </header>
 
     <!-- Content Section -->
-    <section class="content-section features">
+    <section class="features" style="background-color: var(--white);">
         <div class="container">
             <div class="system-container">
-                <h2 style="margin-bottom: 12px; text-align: center;">Verify Authenticity</h2>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 36px;">Enter the unique Certificate ID or Registration ID (e.g. <code>CCI-2026-0001</code>) to retrieve verification records.</p>
+                <h2 style="margin-bottom: 8px; text-align: center;">Verify Authenticity</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem;">Enter the unique Certificate ID or Registration ID (e.g. <code>CCI-2026-0001</code>) to retrieve verification details.</p>
                 
                 <form id="verify-form">
                     <div class="form-group">
-                        <label for="cert-id">Certificate / Registration ID</label>
+                        <label for="cert-id">Certificate / Registration ID *</label>
                         <input type="text" id="cert-id" placeholder="e.g. CCI-2026-0001" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">Verify Now</button>
+                    <button type="submit" class="btn btn-primary btn-full">Verify Record</button>
                 </form>
 
                 <div id="verify-result" class="result-box">
@@ -67,27 +89,31 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-info">
-                <div class="logo">
+                <div class="logo-box">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </div>
-                <p>Excellence in IT education since 2020. Providing quality training for the next generation of digital leaders.</p>
+                <p>CYBERNET COMPUTER INSTITUTE</p>
+                <p style="font-size: 0.85rem; margin-top: 4px;">Excellence in IT education since 2020. Practical computer training and digital skills in Kano, Nigeria.</p>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
-                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="courses.html">Our Courses</a></li>
                     <li><a href="verify.html">Verify Certificate</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p>Sauna Titin Shekarau Opp Nigerian Malaysia, Off Hadejia Road, Nassarawa L.G.A., Kano State.</p>
-                <p style="margin-top: 10px;">Email: cybernetcafeng@gmail.com</p>
-                <p>Phone: 09042834479</p>
-                <p>Phone: 08166350579</p>
+                <h4>Campus Contact</h4>
+                <p>
+                    Sauna Titin Shekarau Opp Nigerian Malaysia,<br>
+                    Off Hadejia Road, Nassarawa L.G.A.,<br>
+                    Kano State, Nigeria
+                </p>
+                <p>Email: <a href="mailto:cybernetcafeng@gmail.com">cybernetcafeng@gmail.com</a></p>
+                <p>Phone: <a href="tel:09042834479">09042834479</a> / <a href="tel:08166350579">08166350579</a></p>
             </div>
         </div>
         <div class="footer-bottom">

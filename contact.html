@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us | Cybernet Computer Institute</title>
-    <meta name="description" content="Contact Cybernet Computer Institute in Kano State, Nigeria. Reach out for enrollment, training inquiries, or general support.">
+    <meta name="description" content="Contact Cybernet Computer Institute in Kano State, Nigeria. Reach out for course enrollment, training schedule inquiries, or general support.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -13,10 +13,10 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="main-navbar">
         <div class="container navbar-content">
             <div class="logo">
-                <a href="index.html">
+                <a href="index.html" class="logo-link">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </a>
             </div>
@@ -24,59 +24,101 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="courses.html">Courses</a></li>
-                <li><a href="verify.html">Verify Certificate</a></li>
+                <li><a href="verify.html">Verify</a></li>
                 <li><a href="contact.html" class="active">Contact</a></li>
             </ul>
             <div class="nav-cta">
-                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+                <a href="register.html" class="btn btn-primary btn-sm">Register Now</a>
             </div>
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="courses.html">Our Courses</a>
+            <a href="verify.html">Verify Certificate</a>
+            <a href="contact.html" class="active">Contact</a>
+        </div>
+        <a href="register.html" class="btn btn-primary btn-full">Register Now</a>
+    </div>
 
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1>Get In Touch</h1>
-            <p>Have questions about our training programs or registration? We're here to help.</p>
+            <span class="label">Get In Touch</span>
+            <h1>Contact Cybernet Computer Institute</h1>
+            <p>Have questions regarding course schedules, registration, or fees? We are here to help.</p>
         </div>
     </header>
 
     <!-- Contact Section -->
-    <section class="content-section features">
+    <section class="features" style="background-color: var(--white);">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <div class="feature-card" style="margin-bottom: 30px;">
-                        <h3>Visit Our Campus</h3>
-                        <p>Our training center is equipped with modern computer lab facilities for an optimal learning experience.</p>
-                        <p style="margin-top: 15px; font-weight: 700; color: var(--primary-navy);">
+                    <div class="feature-card" style="margin-bottom: 24px;">
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <h3>Visit Our Training Campus</h3>
+                        <p style="margin-bottom: 12px; color: var(--text-muted);">Our training facility is located in Kano State:</p>
+                        <p style="font-weight: 700; color: var(--primary-navy); line-height: 1.6;">
                             Sauna Titin Shekarau Opp Nigerian Malaysia,<br>
                             Off Hadejia Road, Nassarawa L.G.A.,<br>
                             Kano State, Nigeria.
                         </p>
                     </div>
+
                     <div class="feature-card">
-                        <h3>Contact Info</h3>
-                        <p>Reach out to our administrative team directly for fast support and enrollment guidance.</p>
-                        <p style="margin-top: 15px; font-weight: 700; color: var(--primary-navy);">Email: cybernetcafeng@gmail.com</p>
-                        <p style="font-weight: 700; color: var(--primary-navy);">Phone: 09042834479</p>
-                        <p style="font-weight: 700; color: var(--primary-navy);">Phone: 08166350579</p>
+                        <div class="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                        </div>
+                        <h3>Direct Inquiries</h3>
+                        <p style="margin-bottom: 12px; color: var(--text-muted);">Reach out directly to our administrative desk:</p>
+                        <p style="margin-bottom: 6px;"><strong>Phone 1:</strong> <a href="tel:09042834479" style="color: var(--logo-blue); font-weight: 700;">09042834479</a></p>
+                        <p style="margin-bottom: 6px;"><strong>Phone 2:</strong> <a href="tel:08166350579" style="color: var(--logo-blue); font-weight: 700;">08166350579</a></p>
+                        <p><strong>Email:</strong> <a href="mailto:cybernetcafeng@gmail.com" style="color: var(--logo-blue); font-weight: 700;">cybernetcafeng@gmail.com</a></p>
                     </div>
                 </div>
+
                 <div class="hero-image">
                     <div class="system-container" style="margin: 0; width: 100%;">
-                        <form onsubmit="event.preventDefault(); Swal.fire({icon: 'success', title: 'Message Sent!', text: 'Thank you for reaching out. We will get back to you shortly.'});">
+                        <h3 style="margin-bottom: 8px;">Send a Message</h3>
+                        <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 24px;">Leave an inquiry and our team will get in touch with you.</p>
+
+                        <form onsubmit="event.preventDefault(); Swal.fire({icon: 'success', title: 'Message Received', text: 'Thank you for contacting Cybernet Computer Institute. We will respond shortly.', confirmButtonColor: '#0F172A'});">
                             <div class="form-group">
-                                <label>Your Name</label>
-                                <input type="text" placeholder="Full Name" required>
+                                <label for="contact-name">Your Full Name *</label>
+                                <input type="text" id="contact-name" placeholder="Enter your full name" required>
                             </div>
                             <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" placeholder="example@email.com" required>
+                                <label for="contact-email">Email Address *</label>
+                                <input type="email" id="contact-email" placeholder="example@email.com" required>
                             </div>
                             <div class="form-group">
-                                <label>Message</label>
-                                <textarea rows="5" placeholder="How can we help you?"></textarea>
+                                <label for="contact-phone">Phone Number</label>
+                                <input type="tel" id="contact-phone" placeholder="e.g. 08166350579">
+                            </div>
+                            <div class="form-group">
+                                <label for="contact-msg">Message *</label>
+                                <textarea id="contact-msg" rows="4" placeholder="How can we assist you with our computer or AI courses?" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-full">Send Message</button>
                         </form>
@@ -90,27 +132,31 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-info">
-                <div class="logo">
+                <div class="logo-box">
                     <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
                 </div>
-                <p>Excellence in IT education since 2020. Providing quality training for the next generation of digital leaders.</p>
+                <p>CYBERNET COMPUTER INSTITUTE</p>
+                <p style="font-size: 0.85rem; margin-top: 4px;">Excellence in IT education since 2020. Practical computer training and digital skills in Kano, Nigeria.</p>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
-                    <li><a href="courses.html">Courses</a></li>
+                    <li><a href="courses.html">Our Courses</a></li>
                     <li><a href="verify.html">Verify Certificate</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
-                <h4>Contact Us</h4>
-                <p>Sauna Titin Shekarau Opp Nigerian Malaysia, Off Hadejia Road, Nassarawa L.G.A., Kano State.</p>
-                <p style="margin-top: 10px;">Email: cybernetcafeng@gmail.com</p>
-                <p>Phone: 09042834479</p>
-                <p>Phone: 08166350579</p>
+                <h4>Campus Contact</h4>
+                <p>
+                    Sauna Titin Shekarau Opp Nigerian Malaysia,<br>
+                    Off Hadejia Road, Nassarawa L.G.A.,<br>
+                    Kano State, Nigeria
+                </p>
+                <p>Email: <a href="mailto:cybernetcafeng@gmail.com">cybernetcafeng@gmail.com</a></p>
+                <p>Phone: <a href="tel:09042834479">09042834479</a> / <a href="tel:08166350579">08166350579</a></p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -121,5 +167,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
 </body>
 </html>

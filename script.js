@@ -101,6 +101,28 @@ window.COURSES_DATA = COURSES_DATA;
 // Wait for the DOM to be fully loaded before attaching event listeners
 document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------------------
+    // MOBILE NAVIGATION TOGGLE
+    // ---------------------------------------------------------
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileNavDrawer = document.getElementById('mobile-nav-drawer');
+    
+    if (mobileMenuBtn && mobileNavDrawer) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNavDrawer.classList.toggle('active');
+            const isExpanded = mobileNavDrawer.classList.contains('active');
+            mobileMenuBtn.setAttribute('aria-expanded', isExpanded);
+        });
+
+        // Close drawer when clicking any link inside
+        mobileNavDrawer.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNavDrawer.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
+    // ---------------------------------------------------------
     // REGISTRATION LOGIC
     // ---------------------------------------------------------
     const registrationForm = document.getElementById('registration-form');
