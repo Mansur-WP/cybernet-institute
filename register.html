@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Registration | Cybernet Computer Institute</title>
+    <meta name="description" content="Register online for practical computer basics, intermediate digital skills, advanced computer training, or AI literacy courses at Cybernet Computer Institute.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,7 +16,9 @@
     <nav class="navbar">
         <div class="container navbar-content">
             <div class="logo">
-                <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
+                <a href="index.html">
+                    <img src="static/logo.png" alt="Cybernet Computer Institute Logo" class="logo-img">
+                </a>
             </div>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
@@ -33,8 +36,8 @@
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1>Join Cybernet</h1>
-            <p>Complete the form below to register for your desired course.</p>
+            <h1>Join Cybernet Computer Institute</h1>
+            <p>Complete the form below to register for your desired training program.</p>
         </div>
     </header>
 
@@ -42,28 +45,28 @@
     <section class="content-section features">
         <div class="container">
             <div class="system-container">
-                <h2 style="margin-bottom: 24px; text-align: center;">Registration Form</h2>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">Fill in your details below to start your professional journey with us.</p>
+                <h2 style="margin-bottom: 12px; text-align: center;">Student Registration Form</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 36px;">Fill in your details accurately to generate your official student registration ID.</p>
                 
                 <form id="registration-form">
                     <div class="form-group">
-                        <label for="full-name">Full Name</label>
+                        <label for="full-name">Full Name *</label>
                         <input type="text" id="full-name" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email Address</label>
+                        <label for="email">Email Address *</label>
                         <input type="email" id="email" placeholder="example@email.com" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" placeholder="e.g. 08012345678" required>
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" placeholder="e.g. 08166350579" required>
                     </div>
                     <div class="form-group">
                         <label for="address">Home Address</label>
-                        <input type="text" id="address" placeholder="e.g. Kano State">
+                        <input type="text" id="address" placeholder="e.g. Nassarawa, Kano State">
                     </div>
                     <div class="form-group">
-                        <label for="gender">Gender</label>
+                        <label for="gender">Gender *</label>
                         <select id="gender" required>
                             <option value="" disabled selected>Select Gender</option>
                             <option value="Male">Male</option>
@@ -71,24 +74,33 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="course">Select Course</label>
+                        <label for="course">Select Course *</label>
                         <select id="course" required>
-                            <option value="" disabled selected>Choose a course</option>
-                            <option value="introductory">Introductory Computer Training (₦10,000)</option>
-                            <option value="intermediate">Intermediate Computer Training (₦15,000)</option>
-                            <option value="advanced">Advanced Computer Training (₦20,000)</option>
+                            <option value="" disabled selected>Choose a course program</option>
+                            <option value="Introduction to Computer Basics">Introduction to Computer Basics (₦10,000 - 3 Weeks)</option>
+                            <option value="Intermediate Computer Training">Intermediate Computer Training (₦15,000 - 4 Weeks)</option>
+                            <option value="Advanced Computer Training">Advanced Computer Training (₦20,000 - 6 Weeks)</option>
+                            <option value="AI Literacy & Digital Productivity">AI Literacy & Digital Productivity (₦10,000 - 2 Weeks) [NEW]</option>
                         </select>
+                        
+                        <!-- Dynamic Course Preview Box showing Duration and Fee -->
+                        <div id="course-selected-box" class="course-selected-box hidden">
+                            <!-- Populated dynamically by JS -->
+                        </div>
                     </div>
-                    <div style="margin-top: 40px;">
+                    <div style="margin-top: 36px;">
                         <button type="submit" class="btn btn-primary btn-full">Submit Application</button>
                     </div>
                 </form>
 
                 <div id="reg-success" class="result-box">
                     <div style="border-left: 4px solid #10B981; padding-left: 20px;">
-                        <h3 style="color: #10B981; margin-bottom: 10px;">✓ Registration Successful</h3>
-                        <p>Your application has been received. Please keep your Registration Number for reference.</p>
-                        <p style="margin-top: 15px; font-size: 1.2rem;"><strong>Reg ID:</strong> <span id="generated-id" style="color: var(--primary-navy);"></span></p>
+                        <h3 style="color: #10B981; margin-bottom: 10px;">✓ Registration Successful!</h3>
+                        <p>Your application has been received and recorded in the institute database. Please save your Registration Number for reference and verification.</p>
+                        <p style="margin-top: 15px; font-size: 1.25rem;"><strong>Reg ID:</strong> <span id="generated-id" style="color: var(--primary-navy); font-family: monospace; font-weight: 700;"></span></p>
+                        <div style="margin-top: 20px;">
+                            <a href="verify.html" class="btn btn-outline btn-sm">Go to Certificate / Reg Verification</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,9 +128,10 @@
             </div>
             <div class="footer-contact">
                 <h4>Contact Us</h4>
-                <p>Email: cybernetcafeng@gmail.com</p>
-                <p>Phone: +234 806 571-2820</p>
-                <p>Phone: +234 904 283-4479</p>
+                <p>Sauna Titin Shekarau Opp Nigerian Malaysia, Off Hadejia Road, Nassarawa L.G.A., Kano State.</p>
+                <p style="margin-top: 10px;">Email: cybernetcafeng@gmail.com</p>
+                <p>Phone: 09042834479</p>
+                <p>Phone: 08166350579</p>
             </div>
         </div>
         <div class="footer-bottom">

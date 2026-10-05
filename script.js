@@ -5,12 +5,98 @@
  */
 
 // 1. Supabase Configuration
-// Replace these with your actual Supabase project URL and Anon Key
 const SUPABASE_URL = 'https://kpbcrndtbtpsmqkcsrqf.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwYmNybmR0YnRwc21xa2NzcnFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDg0MDEsImV4cCI6MjA5NDU4NDQwMX0.pgTN6cndRWYWSC1XDhvNg6Fb8Y3FqhDEufjlK508SMU';
 
 // Initialize Supabase client
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+// Standard Institute Course Definitions
+const COURSES_DATA = {
+    'introductory': {
+        id: 'introductory',
+        title: 'Introduction to Computer Basics',
+        duration: '3 Weeks',
+        fee: 10000,
+        feeFormatted: '₦10,000',
+        description: 'Learn essential computer skills and digital basics.'
+    },
+    'intermediate': {
+        id: 'intermediate',
+        title: 'Intermediate Computer Training',
+        duration: '4 Weeks',
+        fee: 15000,
+        feeFormatted: '₦15,000',
+        description: 'Build stronger digital productivity skills using common computer applications.'
+    },
+    'advanced': {
+        id: 'advanced',
+        title: 'Advanced Computer Training',
+        duration: '6 Weeks',
+        fee: 20000,
+        feeFormatted: '₦20,000',
+        description: 'Take your computer and digital productivity skills further with advanced practical training.'
+    },
+    'ai-literacy': {
+        id: 'ai-literacy',
+        title: 'AI Literacy & Digital Productivity',
+        duration: '2 Weeks',
+        fee: 10000,
+        feeFormatted: '₦10,000',
+        description: 'Learn how to understand and use AI tools for study, work, creativity and everyday productivity.',
+        isNew: true
+    }
+};
+
+/**
+ * Format course name to standard official title.
+ * Ensures backward compatibility with legacy database values ('introductory', 'intermediate', 'advanced').
+ */
+function formatCourseName(course) {
+    if (!course) return 'Unknown Course';
+    const clean = course.trim().toLowerCase();
+    
+    if (clean === 'introductory' || clean === 'intro' || clean === 'introduction to computer basics' || clean === 'introductory computer training') {
+        return 'Introduction to Computer Basics';
+    }
+    if (clean === 'intermediate' || clean === 'intermediate computer training') {
+        return 'Intermediate Computer Training';
+    }
+    if (clean === 'advanced' || clean === 'advanced computer training') {
+        return 'Advanced Computer Training';
+    }
+    if (clean === 'ai-literacy' || clean === 'ai literacy' || clean === 'ai literacy & digital productivity' || clean === 'ai_literacy') {
+        return 'AI Literacy & Digital Productivity';
+    }
+    return course;
+}
+
+/**
+ * Find course data object by key or title
+ */
+function getCourseDetails(courseIdentifier) {
+    if (!courseIdentifier) return null;
+    const clean = courseIdentifier.trim().toLowerCase();
+    
+    if (clean === 'introductory' || clean === 'intro' || clean === 'introduction to computer basics' || clean === 'introductory computer training') {
+        return COURSES_DATA['introductory'];
+    }
+    if (clean === 'intermediate' || clean === 'intermediate computer training') {
+        return COURSES_DATA['intermediate'];
+    }
+    if (clean === 'advanced' || clean === 'advanced computer training') {
+        return COURSES_DATA['advanced'];
+    }
+    if (clean === 'ai-literacy' || clean === 'ai literacy' || clean === 'ai literacy & digital productivity' || clean === 'ai_literacy') {
+        return COURSES_DATA['ai-literacy'];
+    }
+    return null;
+}
+
+// Expose globally
+window.formatCourseName = formatCourseName;
+window.getCourseDetails = getCourseDetails;
+window.COURSES_DATA = COURSES_DATA;
 
 // Wait for the DOM to be fully loaded before attaching event listeners
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +104,56 @@ document.addEventListener('DOMContentLoaded', () => {
     // REGISTRATION LOGIC
     // ---------------------------------------------------------
     const registrationForm = document.getElementById('registration-form');
+    const courseSelect = document.getElementById('course');
+    const courseSelectedBox = document.getElementById('course-selected-box');
+    
+    // Helper to update the dynamic course pricing/duration info card on registration
+    function updateCourseSelectionUI() {
+        if (!courseSelect || !courseSelectedBox) return;
+        const selectedVal = courseSelect.value;
+        const details = getCourseDetails(selectedVal);
+        
+        if (details) {
+            courseSelectedBox.innerHTML = `
+                <div class="course-selected-header">
+                    <span class="course-selected-title">${details.title} ${details.isNew ? '<span class="badge-new">NEW</span>' : ''}</span>
+                    <span class="price">${details.feeFormatted}</span>
+                </div>
+                <div class="course-selected-meta">
+                    <span>Duration: <strong style="color: var(--primary-navy);">${details.duration}</strong></span>
+                    <span>Fee: <strong style="color: var(--logo-blue);">${details.feeFormatted}</strong></span>
+                </div>
+                <div class="course-selected-desc">${details.description}</div>
+            `;
+            courseSelectedBox.classList.remove('hidden');
+        } else {
+            courseSelectedBox.classList.add('hidden');
+        }
+    }
+
+    if (courseSelect) {
+        courseSelect.addEventListener('change', updateCourseSelectionUI);
+
+        // Pre-select course from URL query parameter (e.g. ?course=ai-literacy or ?course=AI%20Literacy%20%26%20Digital%20Productivity)
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseParam = urlParams.get('course');
+        if (courseParam) {
+            const cleanParam = courseParam.trim().toLowerCase();
+            for (let i = 0; i < courseSelect.options.length; i++) {
+                const optVal = courseSelect.options[i].value.toLowerCase();
+                const optText = courseSelect.options[i].text.toLowerCase();
+                if (optVal === cleanParam || optText.includes(cleanParam) || 
+                    (cleanParam.includes('ai') && optVal.includes('ai')) ||
+                    (cleanParam.includes('intro') && optVal.includes('intro')) ||
+                    (cleanParam.includes('inter') && optVal.includes('inter')) ||
+                    (cleanParam.includes('adv') && optVal.includes('adv'))) {
+                    courseSelect.selectedIndex = i;
+                    break;
+                }
+            }
+            updateCourseSelectionUI();
+        }
+    }
     
     if (registrationForm) {
         registrationForm.addEventListener('submit', async function(e) {
@@ -28,11 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('email').value.trim();
             const phoneStr = document.getElementById('phone').value.trim();
             const gender = document.getElementById('gender').value;
-            const course = document.getElementById('course').value;
+            const rawCourse = document.getElementById('course').value;
+            const course = formatCourseName(rawCourse);
             const addressEl = document.getElementById('address');
             const address = addressEl ? addressEl.value.trim() : '';
             
-            // 2. Validate Empty Fields (fallback, though HTML 'required' handles most)
+            // 2. Validate Empty Fields
             if (!fullName || !email || !phoneStr || !gender || !course) {
                 Swal.fire({ icon: 'warning', title: 'Missing Fields', text: 'Please fill in all required fields.' });
                 return;
@@ -45,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 4. Validate Phone Number (must be numeric and appropriate length)
+            // 4. Validate Phone Number
             const phone = parseInt(phoneStr, 10);
             if (isNaN(phone) || phoneStr.length < 10) {
                 Swal.fire({ icon: 'error', title: 'Invalid Phone Number', text: 'Please enter a valid phone number.' });
@@ -59,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // 5. Prevent Duplicate Submissions
-                // Check if email already exists in the students table
                 const { data: existingUser, error: checkError } = await supabaseClient
                     .from('students')
                     .select('email')
@@ -76,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // 6. Generate Registration Number Automatically
-                // Fetch the total count of students to generate the next ID
                 const { count, error: countError } = await supabaseClient
                     .from('students')
                     .select('*', { count: 'exact', head: true });
@@ -107,13 +242,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 8. Show Success Popup and Registration Number
                 document.getElementById('generated-id').innerText = regNo;
                 registrationForm.style.display = 'none';
+                if (courseSelectedBox) courseSelectedBox.style.display = 'none';
                 document.getElementById('reg-success').classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 Swal.fire({
                     icon: 'success',
                     title: 'Registration Successful!',
-                    html: `Your unique Registration ID is:<br><strong style="font-size: 1.5rem; color: #10B981; margin-top: 10px; display: inline-block;">${regNo}</strong>`,
+                    html: `Enrolled in: <strong>${course}</strong><br><br>Your unique Registration ID is:<br><strong style="font-size: 1.5rem; color: #10B981; margin-top: 10px; display: inline-block;">${regNo}</strong>`,
                     confirmButtonColor: '#10B981'
                 });
 
@@ -179,6 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (certData) {
                     console.log('[Verify] Certificate found:', certData);
+                    const formattedCourse = formatCourseName(certData.course);
+                    
                     // Certificate found - show verification details
                     resultBox.innerHTML = `
                         <div class="verification-card">
@@ -189,11 +327,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="verification-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Student Name</span>
-                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.student_name}</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--primary-navy); font-weight: 600;">${certData.student_name}</span>
                                 </div>
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Course Completed</span>
-                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.course}</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--primary-navy); font-weight: 600;">${formattedCourse}</span>
                                 </div>
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Certificate ID</span>
@@ -201,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Completion Date</span>
-                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${certData.completion_date}</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--primary-navy); font-weight: 600;">${certData.completion_date}</span>
                                 </div>
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Status / Grade</span>
@@ -209,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 <div class="grid-item" style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid var(--logo-blue);">
                                     <span class="grid-label" style="display: block; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Issued On</span>
-                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--cert-navy); font-weight: 600;">${new Date(certData.created_at).toLocaleDateString()}</span>
+                                    <span class="grid-val" style="display: block; font-size: 1.15rem; color: var(--primary-navy); font-weight: 600;">${new Date(certData.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
 
@@ -242,19 +380,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (studentData) {
                     console.log('[Verify] Student found, but no certificate issued:', studentData);
+                    const formattedCourse = formatCourseName(studentData.course);
+                    
                     // Student is registered, but certificate is NOT issued yet
                     resultBox.innerHTML = `
                         <div style="border-left: 4px solid #F59E0B; padding: 25px; background: rgba(245, 158, 11, 0.05); border-radius: 8px; text-align: left;">
                             <h3 style="color: #D97706; margin-top: 0; margin-bottom: 15px; font-size: 1.25rem;">⚠️ Certificate Not Issued Yet</h3>
                             <p style="margin-bottom: 12px; color: var(--text-main); font-size: 1.05rem;">
-                                Student <strong style="color: var(--cert-navy);">${studentData.fullname}</strong> is successfully registered.
+                                Student <strong style="color: var(--primary-navy);">${studentData.fullname}</strong> is successfully registered.
                             </p>
                             <div style="background: #fff; padding: 12px; border-radius: 6px; border-left: 3px solid #F59E0B; margin: 15px 0;">
                                 <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
                                     <strong>Registration ID:</strong> ${studentData.reg_no}
                                 </p>
                                 <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
-                                    <strong>Course:</strong> ${studentData.course}
+                                    <strong>Course:</strong> ${formattedCourse}
                                 </p>
                                 <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.95rem;">
                                     <strong>Registered:</strong> ${new Date(studentData.created_at).toLocaleDateString()}
@@ -278,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="border-left: 4px solid #EF4444; padding: 25px; background: rgba(239, 68, 68, 0.05); border-radius: 8px; text-align: left;">
                         <h3 style="color: #DC2626; margin-top: 0; margin-bottom: 15px; font-size: 1.25rem;">✗ Record Not Found</h3>
                         <p style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 12px;">
-                            The ID "<strong style="color: var(--cert-navy); font-family: monospace;">${certIdInput}</strong>" was not found in our records.
+                            The ID "<strong style="color: var(--primary-navy); font-family: monospace;">${certIdInput}</strong>" was not found in our records.
                         </p>
                         <p style="font-size: 0.95rem; color: var(--text-muted); margin: 10px 0;">
                             Possible reasons:
@@ -289,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <li>The student registration may have been removed</li>
                         </ul>
                         <p style="font-size: 0.95rem; color: var(--text-muted); margin: 15px 0; padding-top: 12px; border-top: 1px solid rgba(239, 68, 68, 0.2);">
-                            If you believe this is an error, please contact our administrative support team at <strong>cybernetcafeng@gmail.com</strong> or call <strong>+234 806 571-2820</strong>.
+                            If you believe this is an error, please contact our administrative support team at <strong>cybernetcafeng@gmail.com</strong> or call <strong>09042834479</strong>.
                         </p>
                     </div>
                 `;
@@ -321,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (urlCertId) {
             console.log('[Verify] Auto-search triggered from URL parameter:', urlCertId);
             document.getElementById('cert-id').value = urlCertId;
-            // Dispatch a submit event cleanly to start verification
             verifyForm.dispatchEvent(new Event('submit'));
         }
     }
@@ -336,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminEmailDisplay = document.getElementById('admin-email-display');
     const logoutBtn = document.getElementById('admin-logout-btn');
 
-    if (adminLoginForm) {
+    if (adminLoginForm && supabaseClient) {
         // 1. Auth State Listener
         supabaseClient.auth.onAuthStateChange((event, session) => {
             if (session) {
@@ -383,14 +522,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const tabBtns = document.querySelectorAll('.tab-btn');
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Remove active class from all buttons and panels
                 tabBtns.forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.dashboard-panel').forEach(p => {
                     p.classList.remove('active');
-                    p.style.display = ''; // Clear inline styles that might block CSS
+                    p.style.display = '';
                 });
                 
-                // Add active class to clicked button and target panel
                 btn.classList.add('active');
                 const target = document.getElementById(btn.getAttribute('data-target'));
                 if (target) {
@@ -419,7 +556,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            tbody.innerHTML = data.map(s => `
+            tbody.innerHTML = data.map(s => {
+                const formattedCourse = formatCourseName(s.course);
+                return `
                 <tr>
                     <td style="font-weight: 600;">${s.reg_no}</td>
                     <td>
@@ -431,15 +570,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         </button>
                         <br><small style="color: var(--text-muted);">${s.email}</small>
                     </td>
-                    <td>${s.course}</td>
+                    <td>${formattedCourse}</td>
                     <td>${new Date(s.created_at).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn btn-outline btn-sm" onclick="window.issueCertificate('${s.fullname.replace(/'/g, "\\'")}', '${s.course.replace(/'/g, "\\'")}', '${s.reg_no}')">
+                        <button class="btn btn-outline btn-sm" onclick="window.issueCertificate('${s.fullname.replace(/'/g, "\\'")}', '${formattedCourse.replace(/'/g, "\\'")}', '${s.reg_no}')">
                             Issue Certificate
                         </button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         window.showStudentDetails = async function(regNo) {
@@ -479,6 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const enrolledDate = studentData.created_at ? new Date(studentData.created_at).toLocaleDateString() : 'N/A';
                 const addressText = studentData.address || 'N/A';
                 const phoneText = studentData.phone || 'N/A';
+                const formattedCourse = formatCourseName(studentData.course);
 
                 Swal.fire({
                     icon: certIssued ? 'success' : 'warning',
@@ -492,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 <div>
                                     <div style="color: var(--text-muted); font-weight:700; text-transform:uppercase; font-size:0.85rem;">Course</div>
-                                    <div style="font-size:1.1rem; font-weight:700; color: var(--logo-blue);">${studentData.course}</div>
+                                    <div style="font-size:1.1rem; font-weight:700; color: var(--logo-blue);">${formattedCourse}</div>
                                 </div>
                             </div>
 
@@ -532,19 +672,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            tbody.innerHTML = data.map(c => `
+            tbody.innerHTML = data.map(c => {
+                const formattedCourse = formatCourseName(c.course);
+                return `
                 <tr>
                     <td style="font-weight: 600; color: var(--logo-blue);">${c.cert_no}</td>
                     <td>${c.student_name}</td>
-                    <td>${c.course}</td>
+                    <td>${formattedCourse}</td>
                     <td><span class="status-badge status-valid">${c.status}</span></td>
                     <td>${c.completion_date}</td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
 
         // 6. Issue Certificate Logic
         window.issueCertificate = async function(studentName, course, regNo) {
+            const formattedCourse = formatCourseName(course);
             const { value: formValues } = await Swal.fire({
                 title: 'Issue New Certificate',
                 html: `
@@ -554,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label style="font-size: 0.9em; font-weight: bold; margin-top: 15px; display: block;">Registration / Cert ID</label>
                         <input id="swal-reg" class="swal2-input" value="${regNo}" readonly style="background: #f0f0f0; color: var(--logo-blue); font-weight: bold;">
                         <label style="font-size: 0.9em; font-weight: bold; margin-top: 15px; display: block;">Course Completed</label>
-                        <input id="swal-course" class="swal2-input" value="${course}" readonly style="background: #f0f0f0;">
+                        <input id="swal-course" class="swal2-input" value="${formattedCourse}" style="background: #ffffff;">
                         <label style="font-size: 0.9em; font-weight: bold; margin-top: 15px; display: block;">Status / Grade</label>
                         <select id="swal-status" class="swal2-input" style="display: flex;">
                             <option value="Valid / Authentic">Valid / Authentic</option>
@@ -568,12 +711,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 showCancelButton: true,
                 confirmButtonText: 'Generate & Issue',
                 preConfirm: () => {
-                    return document.getElementById('swal-status').value;
+                    return {
+                        course: document.getElementById('swal-course').value.trim() || formattedCourse,
+                        status: document.getElementById('swal-status').value
+                    };
                 }
             });
 
             if (formValues) {
-                const status = formValues;
+                const finalCourse = formValues.course;
+                const status = formValues.status;
                 const today = new Date().toISOString().split('T')[0];
                 const certNo = regNo; // Use the exact same Registration Number as the Certificate Number
 
@@ -581,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const { error } = await supabaseClient.from('certificates').insert([{
                     student_name: studentName,
-                    course: course,
+                    course: finalCourse,
                     cert_no: certNo,
                     completion_date: today,
                     status: status
@@ -593,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Certificate Issued!',
-                        html: `Certificate ID: <strong>${certNo}</strong> has been saved.`
+                        html: `Certificate ID: <strong>${certNo}</strong> for <strong>${finalCourse}</strong> has been saved.`
                     });
                     fetchCertificates(); // Refresh the certificates table
                 }

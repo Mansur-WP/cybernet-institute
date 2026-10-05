@@ -369,7 +369,7 @@ img {
 
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 32px;
 }
 
@@ -381,35 +381,118 @@ img {
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .course-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-4px);
+    border-color: var(--accent-blue);
 }
 
 .course-content {
-    padding: 40px;
+    padding: 36px;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .course-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+    font-size: 1.45rem;
+    margin-bottom: 0;
+    line-height: 1.3;
 }
 
-.course-card p {
+.badge-new {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #00AEEF 0%, #0077B6 100%);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 174, 239, 0.3);
+}
+
+.course-card p.course-desc {
     color: var(--text-muted);
-    margin-bottom: 32px;
-    font-size: 1.05rem;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.course-topics-container {
+    margin-bottom: 24px;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    border: 1px solid var(--border-color);
+}
+
+.course-topics-container h4 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--primary-navy);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.course-topics-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.course-topics-list li {
+    font-size: 0.88rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.course-topics-list li::before {
+    content: "✓";
+    color: var(--logo-blue);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.course-practical-focus {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: #f1f5f9;
+    border-left: 3px solid var(--logo-blue);
+    border-radius: 4px;
 }
 
 .course-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 24px;
+    padding-top: 20px;
     border-top: 1px solid var(--border-color);
+    margin-top: auto;
 }
 
 .duration {
@@ -419,12 +502,61 @@ img {
     background-color: var(--bg-light);
     padding: 6px 14px;
     border-radius: 4px;
+    border: 1px solid var(--border-color);
 }
 
 .price {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--logo-blue);
+}
+
+/* Course Selected Detail Box in Registration */
+.course-selected-box {
+    background: #f8fafc;
+    border: 1.5px solid var(--border-color);
+    border-left: 4px solid var(--logo-blue);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+}
+
+.course-selected-box.hidden {
+    display: none;
+}
+
+.course-selected-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.course-selected-title {
+    font-weight: 700;
+    color: var(--primary-navy);
+    font-size: 1.05rem;
+}
+
+.course-selected-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.course-selected-meta span {
+    font-weight: 600;
+}
+
+.course-selected-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.5;
 }
 
 /* Systems (Registration & Verification) */

@@ -523,6 +523,25 @@
         console.log('[CERTIFICATE] Inline certificate script loaded');
         window.CERTIFICATE_PAGE = { scriptLoaded: true };
 
+        // Standard Course Formatter
+        function formatCourseName(course) {
+            if (!course) return 'Unknown Course';
+            const clean = course.trim().toLowerCase();
+            if (clean === 'introductory' || clean === 'intro' || clean === 'introduction to computer basics' || clean === 'introductory computer training') {
+                return 'Introduction to Computer Basics';
+            }
+            if (clean === 'intermediate' || clean === 'intermediate computer training') {
+                return 'Intermediate Computer Training';
+            }
+            if (clean === 'advanced' || clean === 'advanced computer training') {
+                return 'Advanced Computer Training';
+            }
+            if (clean === 'ai-literacy' || clean === 'ai literacy' || clean === 'ai literacy & digital productivity' || clean === 'ai_literacy') {
+                return 'AI Literacy & Digital Productivity';
+            }
+            return course;
+        }
+
         // Dynamic scale handler to keep landscape layout pixel perfect on smaller devices
         function resizeCertificate() {
             const wrapper = document.getElementById('certificate-container');
@@ -665,7 +684,7 @@
 
                     // Populate Document Text Node DOM Values
                     certName.innerText = data.student_name || 'Unknown Student';
-                    certCourse.innerText = data.course || 'Unknown Course';
+                    certCourse.innerText = formatCourseName(data.course);
                     certGrade.innerText = data.status || 'Valid';
                     certDate.innerText = data.completion_date || new Date().toISOString().split('T')[0];
                     certRegNo.innerText = data.cert_no || searchId;
